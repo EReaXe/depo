@@ -14,6 +14,5 @@ Kayıtlar cihazdaki localStorage alanındadır; hesap ve bulut senkronizasyonu y
 
 Çift yakıtta LPG ve benzin ayrı kayıtlardır. Aynı kilometrede farklı yakıtlar kaydedilebilir. Farklı yakıt dolumları için birleşik tüketim/maliyet hesabı henüz yoktur; toplamlar korunur. Konuma en yakın istasyonun fiyatı için API bağlantısı henüz sağlanmadı; son kullanılan fiyat açık tarih etiketiyle önerilir veya kullanıcı elle girer.
 
-Fiyatlar ekranında ücretsiz ulusal tahminler gerçek kaynaktan tarihleriyle gösterilir; eski veriler işaretlidir. 81 il seçimi ve konum isteği vardır; bu seçimler ulusal fiyatları şehir fiyatına dönüştürmez. İstasyon/marka fiyat tablosu veri bağlantısı gelene kadar önizlemedir. Pages iş akışı marka dosyasını 6 saatte bir kontrol eder.
 
 Güncel fiyat sağlayıcısı Turkpidya: anahtarsız il/marka EPDK bildirimleri, 6 saatlik kaynak kontrolü, tarihli marka listesi. Eski ulusal tahmin modu kullanılmaz. Konum, yerel il poligonlarında eşleştirilir ve dış servise gönderilmez. Ayrıntılar docs/PRICES.md (belgeler klasöründen PRICES.md).

@@ -28,6 +28,5 @@ Rehber: https://developer.apple.com/design/human-interface-guidelines
 
 Hızlı dolum kısa görev panelidir: Vazgeç / Hızlı dolum başlığı, araca uygun segmentli yakıt seçimi, ödenen tutar, litre fiyatı, güncel kilometre, otomatik litre özeti ve tam dolum seçeneği. Kaydet alt alanda sabit kalır; içerik kayar. Sayısal girişler Türkçe virgül ve nokta ondalığını destekler. Güncel fiyat yoksa açık bilgi, son kullanılan fiyat varsa tarih gösterilir.
 
-Fiyatlar: yatay kaydırılabilir konum/il çipleri, açık mavi üç yakıtlı karşılaştırma kartı ve altında gruplanmış istasyon tablosu. Ücretsiz modda kart başlığı Ulusal referans / Türkiye olur; ≈ işareti, her yakıtın tarihi, eski tahmin etiketi ve kaynak bağlantısı gösterilir. Seçili yakıt mavi sınırla vurgulanır. Fiyatı olmayan istasyon satırları — ve önizleme açıklaması taşır. İl seçimi aramalı sheet, 81 il, dokunulabilir satırlardır.
 
 Güncel fiyat sağlayıcısı Turkpidya: anahtarsız il/marka EPDK bildirimleri, 6 saatlik kaynak kontrolü, tarihli marka listesi. Eski ulusal tahmin modu kullanılmaz. Konum, yerel il poligonlarında eşleştirilir ve dış servise gönderilmez. Ayrıntılar docs/PRICES.md (belgeler klasöründen PRICES.md).

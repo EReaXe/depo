@@ -50,7 +50,7 @@ Kontroller HTML, modül importları, manifest ikonları, önbellek kapsamı ve G
 
 Marka verisi 6 saatte bir kontrol edilip site yeniden yayınlanır. GitHub zamanlanmış işler gecikebilir; bu bir gerçek zaman garantisi değildir. Uzak servis hatasında önceki veri korunur ve fiyatın asıl tarihi değişmez. Siteyi dal kökünden manuel yayınlamak mümkündür ancak zamanlanmış güncellemeler için GitHub Actions yayını gerekir.
 
-Yerelde ücretsiz referansı yenilemek için npm run prices:sync çalıştırın. Sayfa açıkken fiyat dosyası 5 dakikada bir kontrol edilir. İstasyon/konum bazlı karşılaştırma henüz ücretli API'ye bağlı değildir; mevcut ücretsiz değerler Türkiye geneli tahminlerdir. Ayrıntılar: [Fiyat verileri](docs/PRICES.md).
+Yerelde ücretsiz marka verisini yenilemek için npm run prices:sync çalıştırın. Sayfa açıkken fiyat dosyası 5 dakikada bir kontrol edilir. İl ve marka bazlı karşılaştırma ücretsiz Turkpidya verisini kullanır. Tek istasyonun pompa fiyatı garantisi yoktur. Ayrıntılar: [Fiyat verileri](docs/PRICES.md).
 
 sw.js ve manifest kökte kalır. Kaynak dosyası değiştiğinde CACHE sürümünü artırın ve önbellek listesini güncelleyin. Yeni worker eski sekmeler kapanana kadar bekleyebilir. Fiyat JSON'u network-first alınır; çevrimdışıyken eski kopyasının tarihi görünür.
 
@@ -78,3 +78,6 @@ Alt menüde + ile açılır. Yakıt seçilir; tutar ve litre fiyatından litre h
 Konuma göre en yakın istasyon fiyatını otomatik doldurmak için bir istasyon/fiyat API bağlantısı gerekiyor; mevcut sürümde bağlı değil. İlk dolumda fiyat elle girilir; sonraki dolumlarda aynı araç ve yakıtın son fiyatı tarihiyle önerilir. Son fiyat güncel fiyat garantisi değildir. Konum izni otomatik istenmez, konum dış servislere gönderilmez.
 
 Güncel fiyat sağlayıcısı Turkpidya: anahtarsız il/marka EPDK bildirimleri, 6 saatlik kaynak kontrolü, tarihli marka listesi. Eski ulusal tahmin modu kullanılmaz. Konum, yerel il poligonlarında eşleştirilir ve dış servise gönderilmez. Ayrıntılar docs/PRICES.md (belgeler klasöründen PRICES.md).
+
+Beta adresi: https://ereaxe.github.io/depo/
+Kaynak deposu: https://github.com/EReaXe/depo
