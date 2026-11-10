@@ -1,0 +1,39 @@
+name: Publish beta and refresh brand prices
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+  schedule:
+    - cron: '17 */6 * * *'
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Fetch free province/brand reports (retain previous data on failure)
+        continue-on-error: true
+        run: node scripts/sync-prices.mjs
+      - run: npm run check
+      - run: npm test
+      - uses: actions/configure-pages@v5
+      - name: Prepare static files
+        run: node scripts/prepare-site.mjs
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - name: Deploy beta
+        id: deployment
+        uses: actions/deploy-pages@v4

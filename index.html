@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#174c3c"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="description" content="Araçlarının yakıt tüketimini ve kilometre maliyetini çevrimdışı takip et."><link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./assets/icons/icon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="./assets/icons/icon-192.png"><link rel="stylesheet" href="./assets/css/style.css"><title>Depo · Yakıt takibi</title></head>
+<body><header class="appHeader"><button id="openSettings" class="headerIcon" aria-label="Ayarları aç"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button><a class="brand" href="./" aria-label="Depo ana sayfa">depo</a><button id="notifications" class="headerIcon" disabled aria-label="Bildirimler, geliştirme aşamasında" title="Bildirimler yakında"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg></button></header>
+<main><div class="intro"><div><h1 id="screenTitle" tabindex="-1">Yakıt özetin</h1><p id="screenDescription">Aracının tüketimi, bir bakışta.</p></div><button class="primary" id="addRecord">+ Yakıt ekle</button></div>
+<section id="garage" class="garage" aria-label="Araç seçimi"><label for="vehicle">Aracım</label><select id="vehicle"></select><button id="editVehicle">Düzenle</button><button id="addVehicle">+ Araç ekle</button></section>
+<section id="homeCards" class="homeCards" aria-label="Araç kartları" hidden></section>
+<section id="homeEmpty" class="homeEmpty" hidden><svg viewBox="0 0 64 64" aria-hidden="true"><path d="m8 28 24-16 24 16v27H8zM17 55V30h30v25M17 37h30M17 44h30"/></svg><h2>Garaja araç ekleyin</h2><p>Yakıt takibine başlamak için<br>ilk aracınızı garaja ekleyin.</p><button id="homeAddVehicle" class="primary">+ Araç ekle</button></section>
+<section id="prices" class="pricesScreen" aria-label="Yakıt fiyatları" hidden></section>
+<section id="overview" class="metrics" aria-label="Yakıt özeti"><div><span>Ortalama tüketim</span><strong id="consumption">—</strong><small>L / 100 km</small></div><div><span>Kilometre maliyeti</span><strong id="cost">—</strong><small>TL / km</small></div><div><span>Toplam harcama</span><strong id="spent">0</strong><small>TL</small></div><div><span>Kaydedilen yakıt</span><strong id="litres">0</strong><small>litre</small></div></section>
+<p class="hint" id="calculationHint"></p>
+<section id="history" class="history"><div class="sectionHeading"><h2>Dolum geçmişi</h2><span id="count">0 kayıt</span></div><div id="records"></div></section>
+<details id="help" class="help"><summary>Tüketim nasıl hesaplanır?</summary><p>İlk tam dolum başlangıç noktasıdır. Bir sonraki tam dolumda, arada alınan tüm yakıt gidilen mesafeye bölünür. Kısmi dolumlar hesaba katılır; son tam dolumdan sonraki kayıtlar, depo yeniden dolana kadar ortalamaya girmez. TL/km, aynı aralıktaki yakıt harcamalarından hesaplanır. İlk dolumun yakıtı ve tutarı başlangıç olduğu için ortalamaya dahil edilmez.</p></details>
+<footer id="settings"><span>Depo · Yolun hesabı sende.</span><div><button id="install" hidden>Uygulamayı yükle</button><button id="showWelcome">Tanıtımı göster</button><button id="export">Yedek indir</button><button id="import">Yedekten yükle</button><input id="file" type="file" accept="application/json,.json" hidden></div></footer><p id="storageNote" class="storageNote">Kayıtlar yalnızca bu tarayıcıda saklanır. Tarayıcı verilerini silmeden önce yedek al.</p></main>
+<nav class="bottomNav" aria-label="Ana gezinme">
+<button data-screen="home" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10H3zM9 20v-7h6v7"/></svg>Ana Sayfa</button>
+<button data-screen="reports" disabled aria-label="Raporlar, beta sürümünde henüz kullanılamıyor" title="Geliştirme aşamasında"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3v18h17M8 16v-5M13 16V7M18 16V4"/></svg>Raporlar</button>
+<button id="navAdd" class="navAdd" aria-label="Yakıt kaydı ekle"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span></button>
+<button data-screen="vehicles" disabled aria-label="Araçlar, beta sürümünde henüz kullanılamıyor" title="Geliştirme aşamasında"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 10 2-6h12l2 6M3 10h18v8H3zM6 18v3M18 18v3M6 14h2M16 14h2"/></svg>Araçlar</button>
+<button data-screen="prices"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21V4h11v17M2 21h15M7 7h5v5H7zM15 10h3l3 4v5M18 4l3 3v7"/></svg>Fiyatlar</button>
+</nav><section id="welcome" class="welcome" aria-labelledby="welcomeTitle" hidden>
+  <div class="welcomeBrand"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6 27V7a2 2 0 0 1 2-2h11v22M4 27h18M9 9h7v7H9zM19 12h3l4 5v7a2 2 0 0 0 4 0V13l-5-5"/></svg>depo</div>
+  <div class="welcomeContent">
+    <h1 id="welcomeTitle" tabindex="-1">Yolun keyfi sende.<br>Yakıtın hesabı Depo’da.</h1>
+    <p class="welcomeLead">Her dolumu kaydet, aracının ne kadar yaktığını ve her kilometrenin maliyetini gör.</p>
+    <ol class="welcomeSteps">
+      <li><span class="stepNumber" aria-hidden="true">1</span><div><h2>Aracını ekle</h2><p>Aracına bir isim ver. Birden fazla aracın varsa hepsini ayrı ayrı takip et.</p></div></li>
+      <li><span class="stepNumber" aria-hidden="true">2</span><div><h2>Dolumunu kaydet</h2><p>Kilometreyi, litreyi ve ödediğin tutarı gir. Depoyu tam doldurduysan işaretle.</p></div></li>
+      <li><span class="stepNumber" aria-hidden="true">3</span><div><h2>Tüketimini öğren</h2><p>İki tam dolumdan sonra ortalama L/100 km tüketimini ve TL/km maliyetini gör.</p></div></li>
+    </ol>
+    <p class="welcomePrivacy"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 10h12v11H6zM8 10V6a4 4 0 0 1 8 0v4M12 14v3"/></svg><span>Üyelik gerekmez, çevrimdışı da çalışır.<br>Kayıtların bu cihazda kalır; yedeğini indirebilirsin.</span></p>
+  </div>
+  <div class="welcomeActions"><button id="welcomeStart" class="primary">Başlayalım</button><button id="welcomeSkip">Şimdilik keşfet</button></div>
+</section><dialog id="editor"><form id="form"><div class="dialogHeading"><h2 id="formTitle"></h2><button type="button" id="close" aria-label="Kapat">✕</button></div><div id="fields"></div><p id="error" role="alert"></p><div class="formActions"><button type="button" id="delete" class="danger" hidden>Sil</button><button type="submit" class="primary">Kaydet</button></div></form></dialog><div id="toast" role="status"></div><script type="module" src="./assets/js/app.js"></script></body></html>
