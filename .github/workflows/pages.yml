@@ -4,7 +4,7 @@ on:
     branches: [main, master]
   workflow_dispatch:
   schedule:
-    - cron: '17 */6 * * *'
+    - cron: '17,47 * * * *'
 permissions:
   contents: read
   pages: write
@@ -23,9 +23,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Fetch free province/brand reports (retain previous data on failure)
+      - name: Refresh news and due price reports (retain previous data on failure)
         continue-on-error: true
-        run: node scripts/sync-prices.mjs
+        run: node scripts/sync-market-data.mjs
       - run: npm run check
       - run: npm test
       - uses: actions/configure-pages@v5

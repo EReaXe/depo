@@ -1,0 +1,17 @@
+.notificationBadge{position:absolute;right:2px;top:2px;display:grid;place-items:center;min-width:18px;height:18px;padding:0 4px;border-radius:10px;background:#b42318;color:#fff;font-size:10px;line-height:1;font-weight:650;font-variant-numeric:tabular-nums;border:2px solid var(--app-bg)}
+.fuelExpectation{padding:16px;background:var(--tint);border-radius:16px;color:var(--text)}
+.fuelExpectation h2{font-size:15px;line-height:1.4;margin:0 0 8px}
+.fuelExpectation p{font-size:16px;line-height:1.5;margin:0;overflow-wrap:anywhere}
+.fuelExpectation a{display:inline-flex;align-items:center;min-height:44px;font-size:12px;color:var(--action);text-decoration:underline;text-underline-offset:3px}
+.fuelExpectation small{display:block;font-size:12px;line-height:1.5;color:var(--secondary)}
+.notificationContent{padding:0 16px 24px}.notificationNote{font-size:13px;line-height:1.6;color:var(--secondary);margin:0 4px 18px}
+.notificationPreferences{min-width:0;margin:0 0 24px;padding:0;border:0}
+.notificationPreferences legend{font-size:13px;line-height:1.5;color:var(--secondary);padding:0 16px 10px}
+.notificationPreferenceOptions{padding:0 16px;border-radius:16px;background:var(--surface);overflow:hidden}
+.notificationPreferences label{display:flex;justify-content:space-between;align-items:center;gap:16px;min-height:52px;padding:12px 0;font-size:16px;border-bottom:1px solid var(--divider)}
+.notificationPreferences label:last-child{border:0}.notificationPreferences input{flex-shrink:0;width:22px;height:22px;padding:0;margin:0;accent-color:var(--action)}
+.notificationList{list-style:none;margin:0;padding:0;display:grid;gap:12px}.notificationList li{padding:16px;background:var(--surface);border-radius:16px;overflow-wrap:anywhere}
+.notificationMeta{display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;font-size:12px;color:var(--secondary);margin-bottom:10px}
+.notificationList h3{font-size:16px;font-weight:600;line-height:1.4;margin:0 0 8px}.notificationList p{font-size:14px;line-height:1.6;margin:0}
+.notificationSources{display:flex;flex-wrap:wrap;gap:4px 16px;margin-top:8px}.notificationSources a{display:inline-flex;align-items:center;min-height:44px;font-size:13px;color:var(--action);text-decoration:underline;text-underline-offset:3px}
+.notificationEmpty{text-align:center;padding:28px 12px}.notificationEmpty h3{font-size:18px;margin:0 0 12px}.notificationEmpty p{font-size:14px;line-height:1.6;color:var(--secondary);margin:0}

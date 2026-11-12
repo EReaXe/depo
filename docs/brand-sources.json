@@ -466,5 +466,82 @@
       "localOptimized": "./optimized/volvo.png",
       "localOriginal": "./original/volvo.png"
     }
+  },
+  {
+    "name": "shell",
+    "category": "fuel",
+    "file": "assets/brands/fuel/shell.svg",
+    "source": "https://www.shell.com.tr/etc.clientlibs/amidala/clientlibs/theme-base/resources/favicon/favicon.svg",
+    "rights": "Logolar ilgili marka sahiplerinin ticari markalarıdır. Resmî sitelerden alınmıştır; bağlantı veya onay iddiası yoktur."
+  },
+  {
+    "name": "go",
+    "category": "fuel",
+    "file": "assets/brands/fuel/go.png",
+    "source": "https://www.goyakit.com.tr/statics/img/go-y-v2.png",
+    "rights": "Logolar ilgili marka sahiplerinin ticari markalarıdır. Resmî sitelerden alınmıştır; bağlantı veya onay iddiası yoktur."
+  },
+  {
+    "name": "totalenergies",
+    "category": "fuel",
+    "file": "assets/brands/fuel/totalenergies.png",
+    "source": "https://totalenergiesistasyonlari.com.tr/Assets/images/logo_final.png",
+    "rights": "Logolar ilgili marka sahiplerinin ticari markalarıdır. Resmî sitelerden alınmıştır; bağlantı veya onay iddiası yoktur."
+  },
+  {
+    "name": "aytemiz",
+    "category": "fuel",
+    "file": "assets/brands/fuel/aytemiz.png",
+    "source": "https://www.aytemiz.com.tr/assets/img/header-logo-aytemiz.png",
+    "rights": "Logolar ilgili marka sahiplerinin ticari markalarıdır. Resmî sitelerden alınmıştır; bağlantı veya onay iddiası yoktur."
+  },
+  {
+    "name": "po",
+    "category": "fuel",
+    "file": "assets/brands/fuel/po.svg",
+    "source": "https://www.petrolofisi.com.tr/_assets/images/petrol-ofisi.svg",
+    "rights": "Logolar ilgili marka sahiplerinin ticari markalarıdır. Resmî sitelerden alınmıştır; bağlantı veya onay iddiası yoktur."
+  },
+  {
+    "name": "alpet",
+    "category": "fuel",
+    "file": "assets/brands/fuel/alpet.png",
+    "source": "https://www.alpet.com.tr/assets/image/logo.png",
+    "rights": "Logolar ilgili marka sahiplerinin ticari markalarıdır. Resmî sitelerden alınmıştır; bağlantı veya onay iddiası yoktur."
+  },
+  {
+    "name": "lukoil",
+    "category": "fuel",
+    "file": "assets/brands/fuel/lukoil.svg",
+    "source": "https://www.lukoil.com.tr/lukoil_html/img/logo.svg",
+    "rights": "Logolar ilgili marka sahiplerinin ticari markalarıdır. Resmî sitelerden alınmıştır; bağlantı veya onay iddiası yoktur."
+  },
+  {
+    "name": "moil",
+    "category": "fuel",
+    "file": "assets/brands/fuel/moil.svg",
+    "source": "https://www.moil.com.tr/img/MOilLogo.svg",
+    "rights": "Logolar ilgili marka sahiplerinin ticari markalarıdır. Resmî sitelerden alınmıştır; bağlantı veya onay iddiası yoktur."
+  },
+  {
+    "name": "kadoil-k",
+    "category": "fuel",
+    "file": "assets/brands/fuel/kadoil-k.png",
+    "source": "https://www.kadoil.com/uploads/settings/logo_1773051857.png",
+    "rights": "Logolar ilgili marka sahiplerinin ticari markalarıdır. Resmî sitelerden alınmıştır; bağlantı veya onay iddiası yoktur."
+  },
+  {
+    "name": "sunpet",
+    "category": "fuel",
+    "file": "assets/brands/fuel/sunpet.png",
+    "source": "https://www.sunpet.com.tr/wp-content/uploads/2026/05/sunpetlogo.png",
+    "rights": "Logolar ilgili marka sahiplerinin ticari markalarıdır. Resmî sitelerden alınmıştır; bağlantı veya onay iddiası yoktur."
+  },
+  {
+    "name": "opet",
+    "category": "fuel",
+    "file": "assets/brands/fuel/opet.svg",
+    "source": "https://www.opet.com.tr",
+    "rights": "Logolar ilgili marka sahiplerinin ticari markalarıdır. Resmî sitelerden alınmıştır; bağlantı veya onay iddiası yoktur."
   }
 ]

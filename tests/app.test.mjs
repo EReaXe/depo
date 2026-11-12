@@ -39,9 +39,9 @@ test('Kart gerçek kilometreyi gösterir; girilen HTML metin olarak kalır',()=>
   assert.ok(html.includes('1.500'));assert.ok(html.includes('&lt;script&gt;'));assert.ok(!html.includes('<script>'));
   const properties=Object.fromEntries(vehicleProperties(vehicle,[]));assert.equal(properties.Motor,null);assert.equal(properties.Kilometre,'1.000 km');
 });
-test('Beta kilitleri ve yerel marka logoları korunur',()=>{
+test('Beta sekme kilitleri, aktif bildirimler ve yerel marka logoları korunur',()=>{
   const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
-  assert.match(html,/data-screen="reports" disabled/);assert.match(html,/data-screen="vehicles" disabled/);assert.match(html,/id="notifications"[^>]*disabled/);
+  assert.match(html,/data-screen="reports" disabled/);assert.match(html,/data-screen="vehicles" disabled/);assert.doesNotMatch(html,/id="notifications"[^>]*disabled/);assert.match(html,/class="notificationBadge"/);
   for(const brand of brands)assert.ok(existsSync(new URL(`../assets/brands/${brand.slug}.${brand.slug==='togg'?'svg':'png'}`,import.meta.url)));
 });
 test('Yayın yolları, modül importları ve çevrimdışı dosyalar eksiksiz',()=>assert.ok(checkProject()));

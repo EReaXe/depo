@@ -9,7 +9,9 @@
     "check": "node scripts/check.mjs",
     "test": "node --test",
     "prices:sync": "node scripts/sync-prices.mjs",
-    "site:prepare": "node scripts/prepare-site.mjs"
+    "site:prepare": "node scripts/prepare-site.mjs",
+    "news:sync": "node scripts/sync-fuel-news.mjs",
+    "market:sync": "node scripts/sync-market-data.mjs"
   },
   "engines": {
     "node": ">=20"

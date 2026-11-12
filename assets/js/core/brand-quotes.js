@@ -10,9 +10,22 @@ export function brandQuotes(payload,city){
     const fuel=fuels[row.product];
     if(!keys.includes(row.region)||!fuel||!Number.isInteger(row.kurus)||row.kurus<=0||row.kurus>1000000||!/^\d{4}-\d{2}-\d{2}$/.test(row.reported_on)||!Number.isFinite(Date.parse(row.reported_on)))continue;
     const id=`${row.region}:${row.brand}`;
-    if(!rows.has(id))rows.set(id,{id,brand:names.get(row.brand)||row.brand,name:key==='istanbul'?(row.region.endsWith('avrupa')?'İstanbul · Avrupa':'İstanbul · Anadolu'):city,city,district:'',latitude:null,longitude:null,scope:'province-brand',prices:{}});
+    if(!rows.has(id))rows.set(id,{id,brandId:row.brand,brand:names.get(row.brand)||row.brand,name:key==='istanbul'?(row.region.endsWith('avrupa')?'İstanbul · Avrupa':'İstanbul · Anadolu'):city,city,district:'',latitude:null,longitude:null,scope:'province-brand',prices:{}});
     const station=rows.get(id),previous=station.prices[fuel];
     if(!previous||previous.reportedOn<row.reported_on)station.prices[fuel]={price:row.kurus/100,updatedAt:row.reported_on+'T12:00:00+03:00',reportedOn:row.reported_on,estimate:false,stale:snapshotOld||payload.freshness?.state!=='fresh'||payload.status!=='verified',scope:'province-brand',source:'EPDK marka bildirimi · Turkpidya'};
+  }
+  for(const report of payload.lpgReports||[]){
+    if(!['po','aytemiz'].includes(report.brand)||!Array.isArray(report.prices)||!Number.isFinite(Date.parse(report.observedAt)))continue;
+    for(const row of report.prices){
+      if(!keys.includes(row.region)&&!(key==='istanbul'&&row.region==='istanbul'))continue;
+      if(!Number.isInteger(row.kurus)||row.kurus<=0||row.kurus>100000)continue;
+      const id=`${row.region}:${report.brand}`;
+      if(!rows.has(id))rows.set(id,{id,brandId:report.brand,brand:names.get(report.brand)||report.brand,name:row.region==='istanbul'?'İstanbul · il geneli':key==='istanbul'?(row.region.endsWith('avrupa')?'İstanbul · Avrupa':'İstanbul · Anadolu'):city,city,district:'',latitude:null,longitude:null,scope:'province-brand',prices:{}});
+      const reportedOn=row.reportedOn;
+      const updatedAt=reportedOn?reportedOn+'T12:00:00+03:00':report.observedAt;
+      if(!Number.isFinite(Date.parse(updatedAt)))continue;
+      rows.get(id).prices.LPG={price:row.kurus/100,updatedAt,reportedOn,observedAt:report.observedAt,estimate:false,stale:Date.now()-Date.parse(report.observedAt)>24*60*60*1000,scope:'official-list',source:report.brand==='po'?'Petrol Ofisi · resmî LPG listesi':'Aytemiz · resmî LPG listesi',sourceUrl:report.source};
+    }
   }
   const result=[...rows.values()];
   // Keep source values visible, but exclude strong outliers from cheapest claims.

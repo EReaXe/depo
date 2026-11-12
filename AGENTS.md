@@ -45,13 +45,13 @@ Bu dosya tüm depoya uygulanır. Kullanıcının en son açık talimatı bu kura
 - Alt menü sırası: **Ana Sayfa, Raporlar, +, Araçlar, Fiyatlar**.
 - **Raporlar ve Araçlar beta için görünür fakat disabled** kalır; kullanıcı açılmasını istemeden etkinleştirme. Erişilebilir adlarında geliştirme durumu belirtilir.
 - Ortadaki `+` yakıt ekler. Araç yoksa Ana Sayfa'daki araç ekleme eylemine yönlendirir.
-- Üstte uygulama adı ortalanır. Soldaki menü Ayarlar panelini açar. Sağdaki bildirim simgesi görünür ancak beta için pasiftir; sahte bildirim sayısı gösterme.
+- Üstte uygulama adı ortalanır. Soldaki menü Ayarlar panelini açar. Sağdaki bildirim simgesi aktiftir ve bildirim panelini açar; rozet yalnızca gerçek okunmamış bildirim sayısını gösterir.
 - Ana Sayfa'da **“Ana Sayfa” başlığı ve logo altı ayırıcı çizgi bulunmaz**.
 - Araç yoksa ortalanmış **“Garaja araç ekleyin”** metni ve çalışan araç ekleme düğmesi gösterilir.
 - Araç varsa Ana Sayfa kart düzenindedir. İlk kart marka logosu/adı, model, plaka veya plaka ekleme bağlantısı, kilometre, ortalama tüketim ve maliyet içerir.
 - Araç kartındaki ok doğrudan düzenlemeye gitmez: araç özellikleri panelini açar. Panelin sağ üstündeki kalem/**Düzenle** araç düzenlemesini açar. Plaka bağlantısı mevcut aracın 6. adımına gider.
 - Araç özelliklerinde kaydedilmemiş motor, kasa tipi, depo hacmi ve şehir/yol tüketimi gibi bilgiler `—` gösterilir; modele bakarak tahmin edilmez.
-- Ayarlardan araç ekleme, tanıtımı yeniden açma ve yedek işlemlerine erişilir. Kurulum destekleniyorsa yükleme düğmesi Ayarlarda sunulur.
+- Ayarlardan araç ekleme, tanıtımı yeniden açma ve yedek işlemlerine erişilir. Uygulamayı yükle seçeneği Ayarlarda her zaman görünür; doğrudan kurulum desteklenmiyorsa cihaza uygun rehber açılır.
 
 ## Hızlı dolum
 
@@ -106,7 +106,44 @@ Bu dosya tüm depoya uygulanır. Kullanıcının en son açık talimatı bu kura
 - Ücretsiz, anahtarsız kaynak Turkpidya fuel-brands veri kümesidir: https://turkpidya.com/wp-json/turkpidya-data/v1/tools/datasets/fuel-brands. Kaynağı görünür ve tıklanabilir biçimde belirt; API belgesindeki atıf bağlantısını koru.
 - Bunlar son 30 günlük il/marka EPDK bildirimleridir; tek istasyonun fiyatı, canlı pompa verisi veya fiyat garantisi değildir. İstanbul Anadolu/Avrupa ayrı satırlardır. Kocaeli ve Sakarya kaynak adları eşleştirilir. Kaynakta olmayan LPG — gösterilir.
 - Kaynak kuruş değerlerini TL'ye çevir; her satırın bildirildiği tarihi koru. Veri kümesi eskidiyse en düşük seçimine katma. İl/yakıt medyanından %25'ten fazla sapan değerler kontrol etiketiyle gösterilir ve en düşük seçiminden çıkarılır; kaynak sayıları sessizce değiştirilmez.
-- scripts/sync-prices.mjs veriyi assets/data/brand-prices.json içine alır. İş akışı 6 saatte bir kontrol edip Pages'e yayınlar; tarayıcı görünür Fiyatlar ekranında 5 dakikada bir yerel dosyayı kontrol eder. Ücretli servis/anahtar gerekmez.
+- scripts/sync-prices.mjs veriyi assets/data/brand-prices.json içine alır. İş akışı yaklaşık 30 dakikada bir haberleri kontrol edip Pages'e yayınlar; fiyat kaynağı en az 6 saat arayla kontrol edilir; tarayıcı görünür Fiyatlar ekranında 5 dakikada bir yerel dosyayı kontrol eder. Ücretli servis/anahtar gerekmez.
 - 81 il elle seçilebilir. GPS il sınırı poligonlarıyla cihazda eşleşir; kesin koordinatlar üçüncü tarafa gönderilmez. Seçili il depo-price-city anahtarında tutulur. Sınır verisinin kaynağı/lisansı docs/GEO_SOURCE.json ve docs/GEO_LICENSE.md içinde korunur.
 - Son bilinen marka fiyatını Hızlı doluma en yakın istasyon fiyatı diye aktarma. Ayrıntılar docs/PRICES.md içindedir.
 - Kullanıcı beta yayını için EReaXe/depo GitHub deposu ve GitHub Pages yayınını açıkça yetkilendirdi. Gelecek yayınlarda o anki kullanıcı kapsamını esas al.
+
+## Fiyatlar için güncel marka seçimi
+
+- Fiyatlar ekranında ana markalar Petrol Ofisi, Opet, Shell, TotalEnergies, Aytemiz, Lukoil ve Alpet'tir. GO, Kadoil, Sunpet ve M Oil kapalı başlayan “Diğer markalar” bölümünde yer alır. Diğer markalar listelenmez; en düşük fiyat seçimi ve fiyat vurgusu yalnızca 7 ana marka arasında yapılır. Diğer markalar bölümünde fiyat vurgusu bulunmaz. Gerçek logolar assets/brands/fuel altında yerel ve çevrimdışı yüklenir.
+- LPG için Turkpidya'ya ek olarak Petrol Ofisi ve Aytemiz resmî il listeleri kullanılır. Kaynaklar tıklanabilir gösterilir; KDV dahil fiyat, marka, il/yaka ve kaynak tarihi korunur. Petrol Ofisi geçerlilik tarihi yayımlamadığında yalnız kontrol tarihi gösterilir. 24 saatten eski LPG gözlemleri en düşük karşılaştırmasına alınmaz. Başarısız yenilemede eski veri ve tarihi korunur; başka marka LPG fiyatı eşlenmez.
+
+## Sekmeyi hatırlama
+
+- Son açık sekme bu tarayıcıda depo-last-screen anahtarıyla hatırlanır. Yenilemede veya uygulama yeniden açıldığında Ana Sayfa ya da Fiyatlar sekmesine dönülür; kayıt yoksa, değer geçersizse veya depolama kullanılamıyorsa Ana Sayfa açılır. Beta için pasif sekmeler geri yüklenmez.
+- Tanıtımı tamamlama Ana Sayfa'ya döndürür. + ve paneller sekme olarak saklanmaz.
+
+## Panel sürükleme
+
+- Alttan açılan Ayarlar, araç özellikleri, tüketim açıklaması, Hızlı dolum ve il seçimi panelleri ortak tutamaçtan sürüklenir. Panel hareketi parmağı takip eder; yukarı sürükleme genişletir, aşağı sürükleme geniş paneli küçültür veya kapatır. İçerik kaydırması ayrıdır; tutamaç klavyeyle de kullanılabilir. Kaydedilmemiş dolum uyarısı sürükleyerek kapatmada da korunur.
+
+## Tema tercihi
+
+- Görünüm varsayılan olarak cihaz temasını izler. Ayarlar > Görünüm içinde Cihaz teması, Açık ve Koyu seçenekleri bulunur. Seçim depo-theme anahtarında bu tarayıcıda saklanır; Cihaz teması seçiliyken sistem değişiklikleri anında uygulanır. Tercih ilk çizimden önce uygulanarak ters tema parlaması önlenir. Depolama engelliyse tema o oturumda uygulanır ve saklanamadığı belirtilir.
+- Açık tema mevcut renklerini korur. Koyu tema zemin #1c1c1e, yüzey #2c2c2e, ana metin #f2f2f7 kullanır; tasarım renkleri assets/css/theme.css değişkenleriyle yönetilir. Marka logoları renklendirilmez. PWA tarayıcı tema rengi etkin temayla güncellenir.
+
+## Yedekleme ve aktarım
+
+- Ayarlar > Yedekleme ve aktarım panelinde Yedek indir, Yedekten yükle ve Başka cihaza aktar bulunur. JSON yedekleri format/sürüm ve oluşturulma tarihi içerir; eski sürümsüz ve version:1 yedekleri desteklenir. Dosya veya QR bağlantısı önce tarih, araç ve dolum sayısıyla önizlenir. Yükleme mevcut verilerin yerini alır; onay kutusu ve açık yükleme eylemi olmadan veri yazılmaz. Önizlemeden mevcut yedek indirilebilir. Büyük yedekler JSON dosyasıyla aktarılır. QR/bağlantı bir anlık kopyadır, senkronizasyon değildir.
+- JSON içe aktarma en fazla 5 MB kabul eder; gerçek takvim tarihi, kayıt ilişkileri, yakıt/fiyat alanları ve sıra tutarlılığı doğrulanır. Saklama hatasında mevcut veriler korunur.
+- QR cihazda yerel kodlayıcıyla oluşturulur; lisans docs/THIRD_PARTY.md içindedir. Aktarım verisi URL fragment bölümünde taşınır; açılınca adres çubuğundan temizlenir. Bağlantıyı bilen veriye erişebilir; şifreli veya süresi dolan bağlantı iddiası kullanma.
+- localhost bağlantısının başka cihazda açılmayacağı panelde belirtilir; üretimde o anki kök/alt yol korunur. Bulut hizmeti veya arka plan senkronizasyonu bağlanmaz.
+
+## PWA kurulum seçeneği
+
+- Ayarların en üstünde Uygulamayı yükle seçeneği her zaman görünür. Tarayıcı beforeinstallprompt olayını sağlıyorsa düğme doğrudan gerçek kurulum penceresini açar; destek yoksa cihaz/tarayıcıya uygun kurulum adımları gösterilir. iPhone/iPad için Safari > Paylaş > Ana Ekrana Ekle akışı anlatılır. Standalone görünümde veya doğrulanmış appinstalled olayı sonrasında seçenek Uygulama yüklü olarak pasiftir; iptal edilen istek kurulum başarısı sayılmaz.
+- Kullanıcı onayı olmadan tarayıcı kurulum onayı atlanmaz. Gerçek cihaz kurulumu ve çevrimdışı kontrolü yapılmadıysa test edilmiş gibi raporlama.
+
+## Beklenti haberleri ve bildirimler
+
+- Fiyatlar ekranının üstünde yalnızca güncel, süresi dolmamış zam/indirim beklentisi haberi varsa kaynak ve yayın tarihiyle bir alan görünür. Beklenti kesin fiyat gibi sunulmaz. Üstteki bildirim paneli beklenti haberlerini ve seçili ildeki gerçek fiyat değişikliklerini gösterir; yalnız kaynak kontrol tarihi değişince veya bir il ilk kez yüklenince bildirim oluşturulmaz. Okunmamış rozet, okundu durumu ve iki bildirim türünün tercihleri bu tarayıcıda saklanır. Bildirimler uygulama açık ve görünürken kontrol edilir; kapalı uygulamaya push gönderilmez.
+- Beklenti kaynağı NTV ve TRT Haber RSS/Atom akışlarıdır. Haber tarihi ileri taşınmaz; süre bitince üst alan gizlenir. Örnek haber veya fiyat gerçek içerik olarak eklenmez. Ayrıntılar docs/NOTIFICATIONS.md içindedir.
+- Bildirim durumu depo-notifications-v1 anahtarındadır; araç/yakıt verilerinden ayrıdır. İzin isteme, kapalıyken push veya arka plan hizmeti mevcut kapsamda yoktur.

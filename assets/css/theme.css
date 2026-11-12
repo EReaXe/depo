@@ -1,0 +1,59 @@
+:root{
+  --app-bg:#f2f2f7;--outer:#e5e5ea;--surface:#fff;--text:#1c1c1e;
+  --secondary:#62626a;--divider:#d9d9df;--action:#0066cc;--action-hover:#004c99;
+  --accent:#078dc0;--tint:#e8f1fc;--hover:#e7e7ed;--disabled:#8b8b94;
+  --card-start:#f5fbff;--card-end:#eaf2fa;--card-text:#142c3c;
+  --card-secondary:#435d70;--card-line:#cfdde7;--card-surface:#ffffff9e;
+  --nav-bg:rgba(255,255,255,.92);--scrollbar:#c7c7cc;--selection:#c9def8;
+  --danger:#a22c28;--primary-bg:#0066cc;--primary-hover:#0055aa;
+  --green:var(--action);--muted:var(--secondary);--line:var(--divider);
+  background:var(--outer);color:var(--text);color-scheme:light;
+}
+:root[data-theme="dark"]{
+  --app-bg:#1c1c1e;--outer:#000;--surface:#2c2c2e;--text:#f2f2f7;
+  --secondary:#b1b1ba;--divider:#48484c;--action:#70b5ff;--action-hover:#a8d2ff;
+  --accent:#68c6ee;--tint:#193b5d;--hover:#38383c;--disabled:#8e8e98;
+  --card-start:#183449;--card-end:#162c42;--card-text:#f0f6fc;
+  --card-secondary:#bdd0e2;--card-line:#3e5870;--card-surface:#243e55;
+  --nav-bg:rgba(44,44,46,.96);--scrollbar:#68686e;--selection:#254e75;
+  --danger:#ff9994;--primary-bg:#0868c7;--primary-hover:#075aaa;
+  color-scheme:dark;
+}
+body,dialog{color:var(--text)}
+dialog{background:var(--surface)}
+dialog::backdrop{background:#0006}
+:root[data-theme="dark"] dialog{box-shadow:0 12px 48px #0006}
+:root[data-theme="dark"] .vehicleCard,:root[data-theme="dark"] .cheapestPanel{box-shadow:0 4px 18px #0002}
+:root[data-theme="dark"] .bottomNav{box-shadow:0 6px 24px #0003}
+button.primary,.bottomNav .navAdd span{background:var(--primary-bg);border-color:var(--primary-bg);color:#fff}
+button.primary:hover,.bottomNav .navAdd span:hover{background:var(--primary-hover)}
+.priceLocation button.active{background:var(--primary-bg);color:#fff}
+.stationTable .lowest{background:var(--primary-bg);color:#fff}
+input::placeholder{color:var(--secondary);opacity:1}
+input,select{accent-color:var(--action)}
+.sheetContent,.wizardBody,.welcome{scrollbar-color:var(--scrollbar) var(--app-bg)}
+.themeSettings{border:0;padding:0;margin:28px 0 0;min-width:0}
+.themeSettings legend{font-size:13px;text-transform:uppercase;letter-spacing:.3px;color:var(--secondary);padding:0 16px 8px}
+.themeOptions{background:var(--surface);border-radius:16px;padding:0 16px}
+.themeOptions label{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:52px;padding:12px 0;font-size:16px;border-bottom:1px solid var(--divider);cursor:pointer}
+.themeOptions label:last-child{border-bottom:0}
+.themeOptions label>span{min-width:0;line-height:1.4}
+.themeOptions small{display:block;font-size:12px;line-height:1.5;color:var(--secondary);margin-top:4px}
+.themeOptions input{flex-shrink:0;width:22px;height:22px;margin:0;padding:0}
+.themeOptions label:has(:focus-visible){outline:2px solid var(--action);outline-offset:3px;border-radius:4px}
+:root[data-theme="dark"] .fuelBrandLogo:not(.fuelBrandLogo-po):not(.fuelBrandLogo-opet),
+:root[data-theme="dark"] .brandChoice img,:root[data-theme="dark"] .vehicleLogo,
+:root[data-theme="dark"] .sheetIdentity img{background:#fff;border-radius:4px;padding:3px}
+:root[data-theme="dark"] .wizardProgress>div{background:var(--divider)}
+:root[data-theme="dark"] .vehicleWatermark{opacity:.04}
+:root[data-theme="dark"] .headerIcon:disabled{color:var(--disabled)}
+:root[data-theme="dark"] .cheapestFuel{border-color:var(--card-line)}
+:root[data-theme="dark"] .cheapestFuel.selected{border-color:var(--accent)}
+@media(prefers-reduced-transparency:reduce){.bottomNav{background:var(--surface)}}
+@media(prefers-contrast:more){
+  :root{--secondary:#44444b;--divider:#85858f}
+  :root[data-theme="dark"]{--secondary:#dedee5;--divider:#8e8e93;--card-secondary:#e0ecf7}
+  .propertyList dt,.sheetHeading p{color:var(--secondary)}
+  .propertyList>div{border-color:var(--divider)}
+  .bottomNav{background:var(--surface)}
+}

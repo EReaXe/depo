@@ -1,4 +1,5 @@
 import {fuelChoices,parseDecimal,latestUnitPrice,createQuickRecord} from '../core/refill.js';
+import {attachSheetDrag} from './sheet-drag.js';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function today(){const now=new Date();return `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;}
 export function createQuickRefill({getState,save}){
@@ -10,6 +11,7 @@ export function createQuickRefill({getState,save}){
   function open(){
     const state=getState();vehicle=state.vehicles.find(v=>v.id===state.selected);if(!vehicle)return;
     previousFocus=document.activeElement;dirty=false;
+    dialog.classList.remove('expanded');
     const fuels=fuelChoices(vehicle);
     if(!fuels.length){dialog.innerHTML=`<div class="refillToolbar"><button id="refillClose">Kapat</button><h2 id="refillTitle" tabindex="-1">Hızlı dolum</h2><span></span></div><div class="sheetContent sheetExplanation"><p>Elektrikli araçlar için şarj kaydı henüz desteklenmiyor.</p></div>`;}
     else dialog.innerHTML=`<form id="refillForm" novalidate><div class="refillToolbar"><button type="button" id="refillClose">Vazgeç</button><h2 id="refillTitle" tabindex="-1">Hızlı dolum</h2><span></span></div><div class="sheetContent refillContent"><p class="refillVehicle">${esc(vehicle.name)}</p><fieldset class="refillFuel"><legend>Alınan yakıt</legend>${fuels.map((fuel,i)=>`<label><input type="radio" name="fuel" value="${fuel}" ${i===0?'checked':''}><span>${fuel}</span></label>`).join('')}</fieldset><div class="refillInputs"><label>Ödenen tutar <span>TL</span><input name="amount" type="text" inputmode="decimal" placeholder="0,00" autocomplete="off" required></label><label>Litre fiyatı <span>TL / L</span><input name="unitPrice" type="text" inputmode="decimal" placeholder="0,00" autocomplete="off" required aria-describedby="refillPriceNote"></label><p id="refillPriceNote" class="refillNote"></p><label>Güncel kilometre <span>km</span><input name="km" type="text" inputmode="decimal" placeholder="${esc(vehicle.currentKm??'Örn. 45200')}" autocomplete="off" required></label></div><div class="refillLitres"><span>Alınan yakıt</span><output id="refillLitres" aria-live="polite">— L</output></div><label class="refillFull"><input name="full" type="checkbox"><span>Depoyu tam doldurdum<small>Seçilen yakıtın deposu tamamen dolduysa işaretleyin.</small></span></label><p class="refillNote">Kayıt bugünün tarihiyle eklenir. Konuma göre istasyon fiyatı henüz bağlı değil; pompadaki litre fiyatını girin.</p></div><div class="refillActions"><p id="refillError" role="alert"></p><button type="submit" class="primary">Kaydet</button></div></form>`;
@@ -23,7 +25,7 @@ export function createQuickRefill({getState,save}){
       form.onsubmit=e=>{e.preventDefault();try{const data=new FormData(form);const record=createQuickRecord({vehicle,records:getState().records,values:{fuel:data.get('fuel'),amount:data.get('amount'),unitPrice:data.get('unitPrice'),km:data.get('km'),full:data.has('full')},id:crypto.randomUUID(),date:today()});if(save(record)){dirty=false;dialog.close();}else dialog.querySelector('#refillError').textContent='Kayıt saklanamadı. Tekrar deneyin.';}catch(error){dialog.querySelector('#refillError').textContent=error.message;}};
       presetPrice();
     }
-    dialog.showModal();document.body.classList.add('sheetOpen');dialog.querySelector('#refillTitle').focus({preventScroll:true});
+    dialog.showModal();attachSheetDrag(dialog,{close});document.body.classList.add('sheetOpen');dialog.querySelector('#refillTitle').focus({preventScroll:true});
   }
   return {open};
 }
