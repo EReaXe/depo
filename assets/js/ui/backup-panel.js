@@ -8,7 +8,7 @@ export function qrMarkup(text){
   let path='';for(let y=0;y<qr.size;y++)for(let x=0;x<qr.size;x++)if(qr.getModule(x,y))path+=`M${x+4},${y+4}h1v1h-1z `;
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${qr.size+8} ${qr.size+8}" role="img" aria-label="Diğer cihazla okutulacak veri aktarım QR kodu" shape-rendering="crispEdges"><rect width="100%" height="100%" fill="#fff"/><path d="${path}" fill="#000"/></svg>`;
 }
-export function createBackupPanel({getState,validate,commit,notify}){
+export function createBackupPanel({getState,validate,commit,notify,onCleared}){
   const dialog=document.createElement('dialog');dialog.className='iosSheet backupSheet';dialog.setAttribute('aria-labelledby','backupTitle');document.body.append(dialog);
   let returnFocus=null,version=0;
   dialog.addEventListener('close',()=>{version++;document.body.classList.remove('sheetOpen');dialog.replaceChildren();if(returnFocus?.isConnected&&!document.querySelector('dialog[open]'))returnFocus.focus({preventScroll:true});});
@@ -62,5 +62,19 @@ export function createBackupPanel({getState,validate,commit,notify}){
     try{const result=await readTransfer(fragment,validate);if(token===version&&dialog.open)preview(result,'QR / bağlantı aktarımı');}
     catch(e){if(token===version&&dialog.open)error(e.message);}
   }
-  return {open:menu,receiveLocation};
+  function clearData(){
+    const state=getState();
+    draw('Tüm verileri temizle',`<p class="backupLead">Bu tarayıcıdaki ${state.vehicles.length} araç ve ${state.records.length} dolum kaydı kalıcı olarak silinecek.</p><p class="backupWarning">Bu işlem geri alınamaz. Garajınız boşaltılır. Tema, seçili il, tanıtım ve bildirim tercihleriniz korunur. İndirdiğiniz yedek dosyaları silinmez.</p><button class="backupExisting" id="clearBackup">Önce yedek indir</button><label class="backupConsent"><input type="checkbox" id="clearConsent"><span>Tüm araçlarımın ve dolum kayıtlarımın silineceğini anladım.</span></label><button class="primary backupConfirm clearDataConfirm" id="clearConfirm" disabled>Tüm verileri kalıcı olarak sil</button><button class="backupExisting" id="clearCancel">Vazgeç</button>`);
+    dialog.querySelector('#clearBackup').onclick=download;
+    dialog.querySelector('#clearCancel').onclick=()=>dialog.close();
+    const consent=dialog.querySelector('#clearConsent'),button=dialog.querySelector('#clearConfirm');
+    consent.onchange=()=>button.disabled=!consent.checked;
+    button.onclick=()=>{
+      if(!consent.checked)return;
+      if(commit({vehicles:[],records:[],selected:null})){
+        dialog.close();onCleared?.();notify('Tüm araçlar ve dolum kayıtları silindi.');
+      }else error('Veriler temizlenemedi. Mevcut kayıtlar korunuyor; tarayıcının depolama iznini kontrol edin.');
+    };
+  }
+  return {open:menu,openClear:clearData,receiveLocation};
 }

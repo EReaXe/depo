@@ -1,4 +1,4 @@
-import {activeExpectations,comparePriceSnapshot} from '../core/market-notifications.js';
+import {activeExpectations,comparePriceSnapshot,expectationPriceText} from '../core/market-notifications.js';
 import {fetchStations} from '../core/prices.js';
 import {attachSheetDrag} from './sheet-drag.js';
 const key='depo-notifications-v1';
@@ -29,7 +29,8 @@ export function createNotificationCenter({button,getQuery,onChange,notify,storag
   function announce(message){if(document.getElementById('welcome')?.hidden===false||document.querySelector('dialog[open]'))return;notify?.(message);}
   function observeNews(payload){
     news=payload;const active=activeExpectations(news);let added=false;
-    for(const item of active){if(state.seenNews.includes(item.id))continue;state.seenNews.push(item.id);if(state.preferences.expectations){add({id:item.id,type:'expectation',title:'Yeni fiyat beklentisi',body:item.title,createdAt:item.publishedAt,sources:[{name:item.source,url:item.url}]});added=true;}}
+    for(const item of active){if(state.seenNews.includes(item.id))continue;state.seenNews.push(item.id);if(state.preferences.expectations){add({id:item.id,type:'expectation',title:'Yeni fiyat beklentisi',body:item.title+'\n'+expectationPriceText(item),createdAt:item.publishedAt,sources:[{name:item.source,url:item.url}]});added=true;}}
+    for(const item of active){const existing=state.items.find(row=>row.id===item.id&&row.type==='expectation');if(existing)existing.body=item.title+'\n'+expectationPriceText(item);}
     state.seenNews=state.seenNews.slice(-300);persist();publish();
     clearTimeout(expiryTimer);if(active.length)expiryTimer=setTimeout(()=>observeNews(news),Math.max(1,Math.min(...active.map(item=>Date.parse(item.expiresAt)))-Date.now()+20));
     if(added)announce('Yeni bir fiyat beklentisi var. Bildirimler bölümünden inceleyebilirsiniz.');

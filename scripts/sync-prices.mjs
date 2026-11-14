@@ -1,19 +1,40 @@
-import {mkdir,writeFile,readFile} from 'node:fs/promises';
-import {parsePoLpg,parseAytemizLpg} from './lib/lpg.mjs';
-const source='https://turkpidya.com/wp-json/turkpidya-data/v1/tools/datasets/fuel-brands';
-const response=await fetch(source,{signal:AbortSignal.timeout(25000),headers:{Accept:'application/json'}});
-if(!response.ok)throw Error(`Ücretsiz fiyat servisi HTTP ${response.status}`);
-const payload=await response.json();
-if(payload.status!=='verified'||!Array.isArray(payload.data?.prices)||!Array.isArray(payload.data?.brands))throw Error('Fiyat verisi doğrulanamadı; önceki dosya korunuyor.');
-const prices=payload.data.prices.filter(p=>['petrol-95','diesel','lpg'].includes(p.product)&&Number.isInteger(p.kurus)&&p.kurus>0&&Number.isFinite(Date.parse(p.reported_on)));
-if(prices.length<50||new Set(prices.map(p=>p.region)).size<70)throw Error('Beklenen il kapsamı alınamadı; önceki dosya korunuyor.');
-await mkdir(new URL('../assets/data/',import.meta.url),{recursive:true});
+import {writeFile,readFile} from 'node:fs/promises';
+import {cities} from '../assets/js/data/price-config.js';
+import {fuelBrands} from '../assets/js/data/fuel-brands.js';
+import {cityKey} from '../assets/js/core/brand-quotes.js';
+import {parseDoviz,parseShell,dovizUrl,shellUrl,regionKey,retainPriceHistory} from './lib/market-prices.mjs';
 const target=new URL('../assets/data/brand-prices.json',import.meta.url);
 let previous;try{previous=JSON.parse(await readFile(target,'utf8'));}catch{}
-const lpgReports=[];
-for(const [brand,url,parse] of [['po','https://www.petrolofisi.com.tr/akaryakit-fiyatlari',parsePoLpg],['aytemiz','https://www.aytemiz.com.tr/akaryakit-fiyatlari/lpg-fiyatlari',parseAytemizLpg]]){
-  try{const response=await fetch(url,{signal:AbortSignal.timeout(25000)});if(!response.ok)throw Error(`HTTP ${response.status}`);const prices=parse(await response.text());lpgReports.push({brand,source:url,observedAt:new Date().toISOString(),prices});console.log(`${brand}: ${prices.length} resmî LPG liste fiyatı.`);}
-  catch(error){console.warn(`${brand} LPG güncellenemedi: ${error.message}`);const old=previous?.lpgReports?.find(r=>r.brand===brand);if(old)lpgReports.push(old);}
+const observedAt=new Date().toISOString(),prices=[],slugs=cities.flatMap(c=>c==='İstanbul'?['istanbul-anadolu','istanbul-avrupa']:[cityKey(c)]);
+let success=0;
+// Bounded queue: at most three public page requests at a time.
+async function worker(){
+  while(slugs.length){
+    const slug=slugs.shift();
+    try{
+      const response=await fetch(dovizUrl(slug),{signal:AbortSignal.timeout(25000)});
+      if(!response.ok)throw Error('HTTP '+response.status);
+      prices.push(...parseDoviz(await response.text(),slug,observedAt));success++;
+    }catch(error){
+      console.warn(`${slug}: ${error.message}; önceki tarihli kayıt korunuyor.`);
+      prices.push(...(previous?.data?.prices||[]).filter(r=>r.region===regionKey(slug)));
+    }
+  }
 }
-await writeFile(target,JSON.stringify({kind:'province-brand-quotes',source,checkedAt:new Date().toISOString(),...payload,data:{...payload.data,prices},lpgReports},null,2)+'\n');
-console.log(`${prices.length} il/marka fiyat bildirimi alındı. İstasyon pompa fiyatı değildir. Kaynak: Turkpidya.`);
+await Promise.all([worker(),worker(),worker()]);
+let shell;
+try{
+  const response=await fetch(shellUrl,{signal:AbortSignal.timeout(25000)});
+  if(!response.ok)throw Error('HTTP '+response.status);
+  shell=parseShell(await response.json(),observedAt);
+}catch(error){console.warn('Shell yenilenemedi: '+error.message);}
+if(shell){
+  const covered=new Set(shell.map(r=>r.region+':'+r.product));
+  for(let i=prices.length-1;i>=0;i--)if(prices[i].brand==='shell'&&covered.has(prices[i].region+':'+prices[i].product))prices.splice(i,1);
+  prices.push(...shell);
+}
+if(!success||new Set(prices.map(r=>r.region)).size<70)throw Error('Yeterli güncel il kapsamı alınamadı; önceki dosya korunuyor.');
+prices.splice(0,prices.length,...retainPriceHistory(prices,previous?.data?.prices));
+prices.sort((a,b)=>(a.region+':'+a.brand+':'+a.product).localeCompare(b.region+':'+b.brand+':'+b.product));
+await writeFile(target,JSON.stringify({kind:'province-brand-quotes',provider:'doviz-shell',checkedAt:observedAt,fetched_at:observedAt,status:'verified',freshness:{state:'fresh',max_age_seconds:86400},data:{brands:fuelBrands.map(({id,name})=>({id,name})),prices},lpgReports:[]},null,2)+'\n');
+console.log(`${success} il/yaka tablosu güncellendi, ${prices.length} fiyat. Kaynak: Döviz.com ve Shell.`);

@@ -50,7 +50,7 @@ Kontroller HTML, modül importları, manifest ikonları, önbellek kapsamı ve G
 
 Marka verisi 6 saatte bir kontrol edilip site yeniden yayınlanır. GitHub zamanlanmış işler gecikebilir; bu bir gerçek zaman garantisi değildir. Uzak servis hatasında önceki veri korunur ve fiyatın asıl tarihi değişmez. Siteyi dal kökünden manuel yayınlamak mümkündür ancak zamanlanmış güncellemeler için GitHub Actions yayını gerekir.
 
-Yerelde ücretsiz marka verisini yenilemek için npm run prices:sync çalıştırın. Sayfa açıkken fiyat dosyası 5 dakikada bir kontrol edilir. İl ve marka bazlı karşılaştırma ücretsiz Turkpidya verisini kullanır. Tek istasyonun pompa fiyatı garantisi yoktur. Ayrıntılar: [Fiyat verileri](docs/PRICES.md).
+Yerelde ücretsiz marka verisini yenilemek için npm run prices:sync çalıştırın. Sayfa açıkken fiyat dosyası 5 dakikada bir kontrol edilir. İl ve marka bazlı karşılaştırma Döviz.com ve Shell verilerini kullanır. Tek istasyonun pompa fiyatı garantisi yoktur. Ayrıntılar: [Fiyat verileri](docs/PRICES.md).
 
 sw.js ve manifest kökte kalır. Kaynak dosyası değiştiğinde CACHE sürümünü artırın ve önbellek listesini güncelleyin. Yeni worker eski sekmeler kapanana kadar bekleyebilir. Fiyat JSON'u network-first alınır; çevrimdışıyken eski kopyasının tarihi görünür.
 
@@ -58,7 +58,7 @@ sw.js ve manifest kökte kalır. Kaynak dosyası değiştiğinde CACHE sürümü
 
 - Araç ekleme/düzenleme, yakıt kaydı, Ana Sayfa araç kartı, özellikler paneli ve JSON yedekleme çalışır.
 - Raporlar ve Araçlar sekmeleri pasiftir; bildirim paneli aktiftir.
-- Fiyatlar ücretsiz Turkpidya il/marka bildirimlerini karşılaştırır. Bunlar istasyon bazlı kesin pompa fiyatı değildir; LPG kaynaktaysa gösterilir.
+- Fiyatlar Döviz.com il/marka tablolarını ve Shell resmî ilçe medyanlarını karşılaştırır. Bunlar istasyon bazlı kesin pompa fiyatı değildir; LPG kaynaktaysa gösterilir.
 - Araç eklemenin 7. adımı (son yakıt alımı) atlanır. Vites son adımda isteğe bağlıdır.
 - Elektrikli araç kaydı vardır; kWh tüketim hesabı yoktur.
 - Katalog başlangıç listesidir; model/yıl/yakıt uyumluluğunu doğrulamaz.
@@ -77,13 +77,13 @@ Alt menüde + ile açılır. Yakıt seçilir; tutar ve litre fiyatından litre h
 
 Konuma göre en yakın istasyon fiyatını otomatik doldurmak için bir istasyon/fiyat API bağlantısı gerekiyor; mevcut sürümde bağlı değil. İlk dolumda fiyat elle girilir; sonraki dolumlarda aynı araç ve yakıtın son fiyatı tarihiyle önerilir. Son fiyat güncel fiyat garantisi değildir. Konum izni otomatik istenmez, konum dış servislere gönderilmez.
 
-Güncel fiyat sağlayıcısı Turkpidya: anahtarsız il/marka EPDK bildirimleri, 6 saatlik kaynak kontrolü, tarihli marka listesi. Eski ulusal tahmin modu kullanılmaz. Konum, yerel il poligonlarında eşleştirilir ve dış servise gönderilmez. Ayrıntılar docs/PRICES.md (belgeler klasöründen PRICES.md).
+Fiyat kaynağı Döviz.com il/marka tabloları ve Shell resmî fiyat servisidir. scripts/sync-prices.mjs 81 il için İstanbul yakalarını ayırarak 82 tabloyu ve Shell API’sini alır; tarayıcı yalnız yerel assets/data/brand-prices.json dosyasını okur. Döviz.com satır tarihleri korunur. Shell’de yayın tarihi yoktur; kontrol tarihi gösterilir ve ilçe fiyatlarının il/yaka medyanı açıkça belirtilir. Eksik fiyat tahminle doldurulmaz. 24 saatten eski gözlemler ve 10 günden eski Döviz.com tarihleri karşılaştırmaya alınmaz. Hatalı yenilemede eski satırın tarihi korunur. Fiyatlar istasyon pompa fiyatı garantisi değildir. Mevcut 6 saatlik kaynak kontrolü ve 5 dakikalık tarayıcı yenilemesi korunur.
 
 Beta adresi: https://ereaxe.github.io/depo/
 Kaynak deposu: https://github.com/EReaXe/depo
 
 Fiyatlar ekranında ana markalar Petrol Ofisi, Opet, Shell, TotalEnergies, Aytemiz, Lukoil ve Alpet'tir. GO, Kadoil, Sunpet ve M Oil kapalı başlayan “Diğer markalar” bölümünde yer alır. Diğer markalar listelenmez; en düşük fiyat seçimi ve fiyat vurgusu yalnızca 7 ana marka arasında yapılır. Diğer markalar bölümünde fiyat vurgusu bulunmaz. Gerçek logolar assets/brands/fuel altında yerel ve çevrimdışı yüklenir.
-LPG kapsamı: Petrol Ofisi ve Aytemiz resmî il listeleri; diğer markalarda doğrulanmış veri bulunmadığında — gösterilir.
+LPG kapsamı: Döviz.com il/marka tabloları ve Shell resmî servisi. Kaynakta fiyat bulunmadığında — gösterilir.
 
 Son açık sekme bu tarayıcıda depo-last-screen anahtarıyla hatırlanır. Yenilemede veya uygulama yeniden açıldığında Ana Sayfa ya da Fiyatlar sekmesine dönülür; kayıt yoksa, değer geçersizse veya depolama kullanılamıyorsa Ana Sayfa açılır. Beta için pasif sekmeler geri yüklenmez.
 
@@ -94,3 +94,11 @@ Ayarlar > Yedekleme ve aktarım panelinde Yedek indir, Yedekten yükle ve Başka
 Ayarların en üstünde Uygulamayı yükle seçeneği her zaman görünür. Tarayıcı beforeinstallprompt olayını sağlıyorsa düğme doğrudan gerçek kurulum penceresini açar; destek yoksa cihaz/tarayıcıya uygun kurulum adımları gösterilir. iPhone/iPad için Safari > Paylaş > Ana Ekrana Ekle akışı anlatılır. Standalone görünümde veya doğrulanmış appinstalled olayı sonrasında seçenek Uygulama yüklü olarak pasiftir; iptal edilen istek kurulum başarısı sayılmaz.
 
 Fiyatlar ekranının üstünde yalnızca güncel, süresi dolmamış zam/indirim beklentisi haberi varsa kaynak ve yayın tarihiyle bir alan görünür. Beklenti kesin fiyat gibi sunulmaz. Üstteki bildirim paneli beklenti haberlerini ve seçili ildeki gerçek fiyat değişikliklerini gösterir; yalnız kaynak kontrol tarihi değişince veya bir il ilk kez yüklenince bildirim oluşturulmaz. Okunmamış rozet, okundu durumu ve iki bildirim türünün tercihleri bu tarayıcıda saklanır. Bildirimler uygulama açık ve görünürken kontrol edilir; kapalı uygulamaya push gönderilmez.
+
+Ayarlar > Veriler ve uygulama > Tüm verileri temizle, araç ve dolum sayılarını gösteren onay panelini açar. Önce yedek indirilebilir; onay kutusu ve kalıcı silme düğmesi olmadan veri silinmez. Başarılı işlem garajı boşaltıp Ana Sayfa’ya döner; saklama hatasında mevcut kayıtlar korunur. Tema, seçili il, tanıtım ve bildirim tercihleri ile indirilmiş yedekler korunur.
+
+Araç özellikleri paneli, yerel kaynaklı teknik katalogda marka/model/yıl/yakıt ve varsa mevcut vites bilgisiyle eşleşen ortak alanları otomatik gösterir; ek motor/versiyon seçimi yoktur. Birden çok versiyonda farklı olan veya doğrulanmayan motor, kasa, depo ve şehir/yol bilgileri — kalır. Şehir/yol yalnız ayrı NEDC değerleri doğrulanırsa gösterilir; WLTP birleşik tüketim ayrı Fabrika birleşik satırıdır ve gerçek dolum hesabına katılmaz. Veriler cihazda eşleşir, araç kayıtlarına yazılmaz; eski araçlar ve yedek şeması korunur. Başlangıç kapsamı: Clio 2024/2025 için belgelenen yakıt/vitesler, Tiggo 7 ve Tiggo 8 2026 benzinli. Tüm katalog için teknik veri iddiası yoktur. Ayrıntılar docs/VEHICLE_SPECS.md.
+
+Ana Sayfa’da araç kartının hemen altında yalnız geçerli zam/indirim beklentisi haberi olduğunda SON DAKİKA şeridi görünür. Mevcut NTV/TRT haber akışı, kaynak doğrulaması ve süre sonu kuralları kullanılır; kaynak ve özgün yayın tarihi gösterilir. Haber yokken veya süre dolunca alan gizlenir. Birden fazla geçerli haber aynı alanda listelenir; otomatik kayan/yanıp sönen metin yoktur. Beklenti kesin fiyat olarak sunulmaz.
+
+Beklenti haberleri SON DAKİKA şeridinde, Fiyatlar beklenti alanında ve Bildirimlerde kaynaktan açıkça çıkarılabilen tutarı da gösterir. Zam/indirim miktarı TL/L olarak etiketlenir; kaynak beklenen litre fiyatını açıkça veriyorsa ayrı belirtilir. Mevcut il fiyatına zam eklenerek tahmini yeni fiyat üretilmez. RSS başlık/özetindeki geleceğe yönelik açık tutar cümleleri kullanılır; yakıt eşleşmesi belirsiz veya tutarlar çelişkiliyse gösterilmez. Tutar çıkarılamazsa “Tutar bilgisi alınamadı.” yazılır. Eski haber kayıtları geçerli kalır; aynı haber güncellenirse mevcut bildirim metni güncellenir, yeniden okunmamış bildirim oluşturulmaz.

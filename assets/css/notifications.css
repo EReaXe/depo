@@ -15,3 +15,15 @@
 .notificationList h3{font-size:16px;font-weight:600;line-height:1.4;margin:0 0 8px}.notificationList p{font-size:14px;line-height:1.6;margin:0}
 .notificationSources{display:flex;flex-wrap:wrap;gap:4px 16px;margin-top:8px}.notificationSources a{display:inline-flex;align-items:center;min-height:44px;font-size:13px;color:var(--action);text-decoration:underline;text-underline-offset:3px}
 .notificationEmpty{text-align:center;padding:28px 12px}.notificationEmpty h3{font-size:18px;margin:0 0 12px}.notificationEmpty p{font-size:14px;line-height:1.6;color:var(--secondary);margin:0}
+
+.homeBreaking{display:flex;align-items:flex-start;gap:12px;padding:14px 12px;background:var(--surface);border-radius:14px;color:var(--text);margin-top:16px}
+.homeBreaking h2{flex:0 0 auto;margin:2px 0 0;padding:5px 7px;border-radius:5px;background:var(--breaking-bg);color:#fff;font-size:10px;line-height:1.4;font-weight:750;letter-spacing:.2px}
+.homeBreakingNews{min-width:0;flex:1}
+.homeBreakingNews article+article{margin-top:10px;padding-top:10px;border-top:1px solid var(--divider)}
+.homeBreakingNews p{margin:0;font-size:14px;line-height:1.5;overflow-wrap:anywhere}
+.homeBreakingNews a{display:inline-flex;align-items:center;min-height:44px;font-size:12px;line-height:1.5;color:var(--action);text-decoration:underline;text-underline-offset:3px;overflow-wrap:anywhere}
+.homeBreakingNews small{display:block;font-size:11px;line-height:1.5;color:var(--secondary)}
+@media(max-width:350px){.homeBreaking{gap:8px;padding:12px 10px}.homeBreaking h2{font-size:9px;padding:5px}.homeBreakingNews p{font-size:13px}}
+
+.homeBreakingNews .expectationAmount,.fuelExpectation .expectationAmount{margin-top:7px;font-size:13px;font-weight:600;line-height:1.5}
+.notificationList li>p{white-space:pre-line}

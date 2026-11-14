@@ -5,7 +5,7 @@ import {createPricesScreen} from './ui/prices-screen.js';
 import {createQuickRefill} from './ui/quick-refill.js';
 import {recordDetails} from './core/refill.js';
 import {createPanels} from './ui/panels.js';
-import {renderHomeCard} from './ui/home-card.js';
+import {renderHomeCard,homeExpectationMarkup} from './ui/home-card.js';
 import {createVehicleWizard} from './ui/vehicle-wizard.js';
 import {vehicleDetails} from './data/vehicles.js';
 import {calculate} from './core/calc.js';
@@ -50,6 +50,7 @@ function setScreen(screen){
   if(screen==='prices')pricesScreen?.show();else pricesScreen?.hide();
   $('garage').hidden=screen!=='vehicles'&&(screen!=='reports'||!hasVehicle);
   $('homeCards').hidden=screen!=='home'||!hasVehicle;
+  $('homeExpectations').hidden=screen!=='home'||!hasVehicle||!$('homeExpectations').innerHTML;
   $('overview').hidden=!hasVehicle||screen!=='reports';
   $('calculationHint').hidden=$('overview').hidden;
   $('history').hidden=screen!=='reports';
@@ -63,8 +64,14 @@ function setScreen(screen){
 for(const button of document.querySelectorAll('[data-screen]'))button.onclick=()=>{setScreen(button.dataset.screen);window.scrollTo({top:0,behavior:'instant'});};
 $('navAdd').onclick=()=>{if(state.selected)openRecord();else{setScreen('home');toast('Önce garaja bir araç ekleyin.');$('homeAddVehicle').focus();}};
 $('homeAddVehicle').onclick=()=>openVehicle();
+function renderHomeExpectations(){
+  const host=$('homeExpectations');
+  const markup=homeExpectationMarkup(notificationCenter?.getExpectations()||[]);
+  if(host.innerHTML!==markup)host.innerHTML=markup;
+  host.hidden=currentScreen!=='home'||!state.vehicles.length||!markup;
+}
 const originalRender=render;
-render=function(){originalRender();renderHomeCard({state,openVehicle,showVehicle:id=>panels.showVehicle(id),onInfo:()=>panels.showInfo(),selectVehicle:id=>commit({...state,selected:id})});setScreen(currentScreen);};
+render=function(){originalRender();renderHomeCard({state,openVehicle,showVehicle:id=>panels.showVehicle(id),onInfo:()=>panels.showInfo(),selectVehicle:id=>commit({...state,selected:id})});renderHomeExpectations();setScreen(currentScreen);};
 render();
 
 import {initWelcome} from './ui/welcome.js';
@@ -75,19 +82,19 @@ const vehicleWizard=createVehicleWizard({
   remove(id){if(!confirm('Bu araç ve tüm yakıt kayıtları silinsin mi?'))return false;const next=structuredClone(state);next.vehicles=next.vehicles.filter(v=>v.id!==id);next.records=next.records.filter(r=>r.vehicle!==id);next.selected=next.vehicles[0]?.id||null;return commit(next);}
 });
 
-const panels=createPanels({getState:()=>state,editVehicle:id=>openVehicle(id),addVehicle:()=>openVehicle(),theme,onThemeStorageError:()=>toast('Tema uygulandı ancak bu tarayıcıda saklanamadı.'),openBackup:()=>backupPanel.open()});
+const panels=createPanels({getState:()=>state,editVehicle:id=>openVehicle(id),addVehicle:()=>openVehicle(),theme,onThemeStorageError:()=>toast('Tema uygulandı ancak bu tarayıcıda saklanamadı.'),openBackup:()=>backupPanel.open(),openClear:()=>backupPanel.openClear()});
 $('openSettings').onclick=()=>panels.showSettings();
 
 const quickRefill=createQuickRefill({getState:()=>state,save(record){const next=structuredClone(state);next.records.push(record);try{validate(next);}catch(error){toast(error.message);return false;}if(commit(next)){toast('Dolum kaydedildi.');return true;}return false;}});
 
 pricesScreen=createPricesScreen({host:$('prices'),getVehicle:()=>state.vehicles.find(v=>v.id===state.selected),getExpectations:()=>notificationCenter?.getExpectations()||[],onPrices:(result,query)=>notificationCenter?.observePrices(result,query)});
-notificationCenter=createNotificationCenter({button:$('notifications'),getQuery:()=>pricesScreen.getQuery(),onChange:()=>pricesScreen.render(),notify:toast});
+notificationCenter=createNotificationCenter({button:$('notifications'),getQuery:()=>pricesScreen.getQuery(),onChange:()=>{pricesScreen.render();renderHomeExpectations();},notify:toast});
 setScreen(currentScreen);
 
 // Reveal the restored screen only after state, panels and onboarding are ready.
 document.documentElement.removeAttribute('data-starting');
 
-const backupPanel=createBackupPanel({getState:()=>state,validate,commit,notify:toast});
+const backupPanel=createBackupPanel({getState:()=>state,validate,commit,notify:toast,onCleared:()=>setScreen('home')});
 backupPanel.receiveLocation();
 window.addEventListener('hashchange',()=>backupPanel.receiveLocation());
 

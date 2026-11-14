@@ -1,3 +1,4 @@
+import {activeExpectations,expectationPriceText} from '../core/market-notifications.js';
 import {brands} from '../data/vehicles.js';
 import {calculate} from '../core/calc.js';
 const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -31,4 +32,10 @@ export function renderHomeCard({state,openVehicle,showVehicle,onInfo,selectVehic
   document.getElementById('homeVehicleDetails').onclick=()=>showVehicle(vehicle.id);
   document.getElementById('homeVehiclePlate').onclick=()=>openVehicle(vehicle.id,6);
   document.getElementById('homeConsumptionInfo').onclick=onInfo;
+}
+
+export function homeExpectationMarkup(items,now=Date.now()){
+  const active=activeExpectations({kind:'fuel-expectations',items},now);
+  if(!active.length)return '';
+  return `<aside class="homeBreaking" aria-label="Güncel yakıt fiyatı beklentileri"><h2>SON DAKİKA</h2><div class="homeBreakingNews">${active.map(item=>`<article><p>${escape(item.title)}</p><p class="expectationAmount">${escape(expectationPriceText(item))}</p><a href="${escape(item.url)}" target="_blank" rel="noopener noreferrer">${escape(item.source)} · ${new Date(item.publishedAt).toLocaleString('tr-TR',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</a></article>`).join('')}<small>Zam/indirim beklentisidir; kesinleşmiş fiyat değildir.</small></div></aside>`;
 }

@@ -17,7 +17,7 @@ export function normalizeStations(payload){
 }
 export function isCurrent(price,now=Date.now()){
   const age=now-Date.parse(price?.updatedAt);
-  const maxAge=price?.scope==='province-brand'?30*24*60*60*1000:priceConfig.maxAgeMs;
+  const maxAge=price?.scope==='market-list'&&price.reportedOn?10*86400000:price?.scope==='province-brand'?30*24*60*60*1000:priceConfig.maxAgeMs;
   return !!price&&!price.estimate&&!price.stale&&!price.unusual&&age>=-300000&&age<=maxAge;
 }
 export function cheapestStations(stations,now=Date.now()){
@@ -36,7 +36,7 @@ export async function fetchStations(query,{signal,fetcher=fetch,endpoint=priceCo
     const response=await fetcher('./assets/data/brand-prices.json',{signal,cache:'no-store'});
     if(!response.ok)throw Error('Marka fiyat dosyası yüklenemedi. İnternet bağlantısını kontrol edin.');
     const payload=await response.json();
-    return {stations:brandQuotes(payload,query?.city),configured:false,scope:'province-brand',checkedAt:payload.checkedAt};
+    return {stations:brandQuotes(payload,query?.city),configured:false,scope:'province-brand',provider:payload.provider,checkedAt:payload.checkedAt};
   }
   const url=new URL(endpoint,globalThis.location?.href||'https://localhost/');
   if(url.protocol!=='https:'&&url.hostname!=='localhost'&&url.hostname!=='127.0.0.1')throw Error('Fiyat servisi HTTPS kullanmalı.');

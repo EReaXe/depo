@@ -1,38 +1,24 @@
-# Ücretsiz fiyat kaynağı
+# Fiyat kaynakları
 
-Uygulama Turkpidya'nın anahtarsız ve ücretsiz API'sini kullanır:
-https://turkpidya.com/wp-json/turkpidya-data/v1/tools/datasets/fuel-brands
+Fiyat kaynağı Döviz.com il/marka tabloları ve Shell resmî fiyat servisidir. scripts/sync-prices.mjs 81 il için İstanbul yakalarını ayırarak 82 tabloyu ve Shell API’sini alır; tarayıcı yalnız yerel assets/data/brand-prices.json dosyasını okur. Döviz.com satır tarihleri korunur. Shell’de yayın tarihi yoktur; kontrol tarihi gösterilir ve ilçe fiyatlarının il/yaka medyanı açıkça belirtilir. Eksik fiyat tahminle doldurulmaz. 24 saatten eski gözlemler ve 10 günden eski Döviz.com tarihleri karşılaştırmaya alınmaz. Hatalı yenilemede eski satırın tarihi korunur. Fiyatlar istasyon pompa fiyatı garantisi değildir. Mevcut 6 saatlik kaynak kontrolü ve 5 dakikalık tarayıcı yenilemesi korunur.
 
-Belge ve kullanım koşulları: https://turkpidya.com/developers/
-Görünür atıf: https://turkpidya.com/en/tools?utm_source=api&utm_medium=credit&utm_campaign=tools
+## Kaynaklar ve kapsam
 
-Bu veri son 30 günde markalar tarafından EPDK'ya bildirilmiş il bazlı fiyatları içerir. Markalar değişiklik olduğunda bildirim yapar. Dolayısıyla satır tarihi kaynak kontrol tarihinden eski olabilir. Kuruş cinsindeki değerler TL'ye çevrilir. İl ve marka bazlı bildirimler tek bir istasyonun garantili pompa fiyatı değildir. Turkpidya veri kümesinde bulunmayan LPG için Petrol Ofisi ve Aytemiz resmî il listeleri ek kaynak olarak kullanılır. Başka markanın fiyatından veya başka yakıttan fiyat türetilmez.
+- Döviz.com: https://www.doviz.com/akaryakit-fiyatlari — her ilin benzin, motorin, LPG tablosu; orijinal satır tarihi korunur. İstanbul Anadolu/Avrupa ayrı alınır. Kocaeli ve Sakarya mevcut yerel bölge kimliklerine eşlenir.
+- Shell: https://pompafiyat.turkiyeshell.com/api/Public/prices — resmî ürün listesinde TRY olarak doğrulanan 37 (95 oktan benzin), 34 (motorin), 5 (LPG) kodları. İlçe fiyatlarının medyanı hesaplanır; İstanbul yakaları ayrı tutulur. Servis yayın tarihi sağlamadığı için yalnız kontrol tarihi sunulur. İlçe medyanı gerçek bir istasyon fiyatı değildir.
 
-İstanbul Anadolu ve Avrupa ayrı satırlardır. Kocaeli-İzmit ve Sakarya-Adapazarı il seçimiyle eşleştirilir. Veri kümesi tazeliği hem kaynağın freshness işareti hem kaynak fetched_at tarihi üzerinden kontrol edilir. 30 günden eski, gelecek tarihli, tahmini veya geçersiz kayıtlar en düşük seçimine girmez. İl/yakıt medyanından %25'ten fazla sapan değerler kontrol etiketiyle tutulur, en düşük seçiminden çıkarılır. Bu basit tutarlılık kontrolü doğruluk garantisi değildir; fiyatın asıl bildirim tarihi satırda gösterilir.
+Ücretli API veya anahtar kullanılmaz. Kaynakların herkese açık olması sınırsız kullanım garantisi değildir; HTML yapısı, erişim ve koşullar değişebilir. Üç eşzamanlı istek sınırı vardır. Kaynak metinleri/scriptleri çalıştırılmaz; yalnız beklenen tablo ve ürün alanları okunur. Sütun veya ürün yapısı değişirse işlem reddedilir.
 
-## Yenileme ve yayın
+## Veri bütünlüğü
 
-`npm run prices:sync` doğrulanmış veriyi assets/data/brand-prices.json içine alır. Başarısız istek veya eksik il kapsamı eski dosyayı silmez. Gizli anahtar veya ücretli servis gerekmez. Tarayıcı sadece bu dosyayı okur.
+Eksik fiyatlar başka marka veya il ortalamasıyla doldurulmaz. %25 üzeri il/yakıt sapması işaretlenir; kaynak değeri değiştirilmez ve en düşük seçimine alınmaz. Gelecek tarihli, eski veya tahmini fiyatlar karşılaştırılmaz. Başarısız il yenilemesinde eski satırlar kendi kaynak ve tarihleriyle korunur. Tüm il istekleri başarısızsa veya toplam kapsam 70 bölgenin altındaysa dosya yazılmaz. Shell başarısızsa o ilde alınabilen Döviz.com Shell satırı kullanılır.
 
-.github/workflows/pages.yml main/master push, manuel tetikleme ve yaklaşık 30 dakikalık zamanlama ile haberleri yeniler. Fiyatlar son yayın dosyası üzerinden en az altı saatlik aralıkla yenilenir; tüm kontrollerden sonra statik dosyalar GitHub Pages'e dağıtılır. GitHub Pages Source ayarı GitHub Actions olmalıdır. GitHub zamanlanmış görevleri gecikebilir. Güncelleme anlık pompa fiyatı garantisi vermez.
+## Yenileme ve gizlilik
 
-## Konum gizliliği
+npm run prices:sync statik dosyayı günceller. Mevcut Pages iş akışı fiyat kaynağını en az 6 saat arayla kontrol eder; açık ve görünür Fiyatlar ekranı yerel dosyayı 5 dakikada bir kontrol eder. Bu değişiklik kendiliğinden GitHub’a gönderilmez veya yayınlanmaz.
 
-81 il elle seçilebilir. Konum izni kullanıcı tarafından verildikten sonra GPS koordinatları yerel il sınırı poligonlarıyla eşleştirilir. Kesin koordinatlar üçüncü tarafa gönderilmez veya localStorage'a yazılmaz. İl eşleşmezse manuel seçim sunulur. Kaynak/lisans bilgileri GEO_SOURCE.json ve GEO_LICENSE.md içindedir.
+GPS il sınırı poligonlarıyla cihazda eşleştirilir; kesin konum üçüncü tarafa gönderilmez. Kaynak/lisans: GEO_SOURCE.json ve GEO_LICENSE.md. 7 ana marka/4 diğer marka düzeni korunur; yalnız ana markalar en düşük karşılaştırmasına girer.
 
-Eski UcuzYakıtBul ulusal tahmin dosyası kullanılmaz. Gerçek istasyon bazlı veri ileride farklı bir sağlayıcı gerektirebilir; statik uygulamaya API sırları konmaz.
+Eski Turkpidya ile PO/Aytemiz LPG dosyaları önbellek geçişi için okunabilir; yeni eşitleme bu kaynakları kullanmaz. Beklenti haberleri ve bildirimler ayrı akış olarak korunur.
 
-## Seçili markalar ve LPG
-
-Fiyatlar ekranında ana markalar Petrol Ofisi, Opet, Shell, TotalEnergies, Aytemiz, Lukoil ve Alpet'tir. GO, Kadoil, Sunpet ve M Oil kapalı başlayan “Diğer markalar” bölümünde yer alır. Diğer markalar listelenmez; en düşük fiyat seçimi ve fiyat vurgusu yalnızca 7 ana marka arasında yapılır. Diğer markalar bölümünde fiyat vurgusu bulunmaz. Gerçek logolar assets/brands/fuel altında yerel ve çevrimdışı yüklenir.
-
-LPG listeleri resmî kaynaklardan alınır:
-
-- https://www.petrolofisi.com.tr/akaryakit-fiyatlari — KDV dahil PO/gaz sütunu. Geçerlilik tarihi verilmediği için yalnız “Kontrol” tarihi gösterilir.
-- https://www.aytemiz.com.tr/akaryakit-fiyatlari/lpg-fiyatlari — KDV dahil tavsiye edilen il listesi ve sayfanın bildirdiği geçerlilik tarihi.
-
-Her kaynak kendi marka/il satırına bağlanır; İstanbul yakaları ayrı korunur. Bunlar tek istasyonun kesin pompa fiyatı değildir. LPG fiyatları aynı brand-prices.json dosyasının lpgReports alanında, kaynak adresi ve özgün gözlem tarihiyle saklanır. Yenileme mevcut 6 saatlik iş akışına dahildir; tarayıcı üçüncü taraf sitelere istek göndermez. LPG kaynağı hatasında önceki rapor ve tarihi korunur; 24 saatten eski gözlemler en düşük seçimine girmez. Sayfa yapısı veya kapsam değişirse hatalı sütun alınmaz. Diğer markaların LPG hücreleri doğrulanmış veri olmadığı sürece — kalır. Kontrol tarihi fiyatın değiştiği tarih diye sunulmaz.
-
-## Beklenti ve bildirim kontrolü
-
-scripts/sync-market-data.mjs planlı çalışmada son yayın dosyalarını geri alır; fiyat kontrolü altı saat dolduğunda scripts/sync-prices.mjs çalışır. Haberler scripts/sync-fuel-news.mjs ile her planlı çalışmada kontrol edilir. Haber akışının ayrıntıları ve süre kuralları docs/NOTIFICATIONS.md içindedir.
+Fiyatın yanında aynı il/yaka, marka, yakıt ve kaynaktaki son farklı fiyata göre artışta yeşil yukarı, düşüşte kırmızı aşağı ok gösterilir (kullanıcının açık renk tercihi). Okun erişilebilir açıklaması önceki fiyatı içerir. İlk gözlemde, kaynak değişince ve eski/geçersiz fiyatta ok yoktur. Fiyat sabit kaldığında son değişim yönü korunur; yenileme kendi başına ok oluşturmaz. Geçmiş veri kaynağın geçmiş servisi değildir; bundan sonraki eşitlemelerle birikir.

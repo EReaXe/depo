@@ -1,13 +1,18 @@
+import {resolveVehicleSpecs} from '../data/vehicle-specs.js';
 import {brands} from '../data/vehicles.js';
 import {attachSheetDrag} from './sheet-drag.js';
 import {installationGuide} from './install.js';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const svg=path=>`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${path}"/></svg>`;
 export function vehicleProperties(vehicle,records){
+  const {values:spec}=resolveVehicleSpecs(vehicle);
+  const number=n=>new Intl.NumberFormat('tr-TR',{maximumFractionDigits:1}).format(n);
+  const consumption=spec.urban!==null&&spec.extraUrban!==null&&spec.cycle==='NEDC'?`${number(spec.urban)} / ${number(spec.extraUrban)} L/100 km (NEDC)`:null;
+  const combined=spec.combined?`${spec.combined.map(number).filter((v,i,a)=>i===0||v!==a[0]).join('–')} L/100 km (${spec.cycle})`:null;
   const km=records.reduce((max,r)=>Math.max(max,r.km),vehicle.currentKm??0);
-  return [['Marka',vehicle.brand||vehicle.name],['Model',vehicle.model],['Yıl',vehicle.year],['Plaka',vehicle.plate],['Yakıt',vehicle.fuel],['Vites',vehicle.transmission],['Araç tipi',null],['Motor',null],['Depo',null],['Şehir / Yol',null],['Renk',vehicle.color],['Kilometre',vehicle.currentKm!==undefined||records.length?`${new Intl.NumberFormat('tr-TR').format(km)} km`:null]];
+  return [['Marka',vehicle.brand||vehicle.name],['Model',vehicle.model],['Yıl',vehicle.year],['Plaka',vehicle.plate],['Yakıt',vehicle.fuel],['Vites',vehicle.transmission],['Araç tipi',spec.body],['Motor',spec.engine],['Depo',spec.tankLitres!==null?`${number(spec.tankLitres)} L`:null],['Şehir / Yol',consumption],...(combined?[['Fabrika birleşik',combined]]:[]),['Renk',vehicle.color],['Kilometre',vehicle.currentKm!==undefined||records.length?`${new Intl.NumberFormat('tr-TR').format(km)} km`:null]];
 }
-export function createPanels({getState,editVehicle,addVehicle,theme,onThemeStorageError,openBackup}){
+export function createPanels({getState,editVehicle,addVehicle,theme,onThemeStorageError,openBackup,openClear}){
   const dialog=document.createElement('dialog');dialog.className='iosSheet';dialog.setAttribute('aria-labelledby','sheetTitle');document.body.append(dialog);
   const settings=document.getElementById('settings');
   const storageNote=document.getElementById('storageNote');
@@ -32,7 +37,9 @@ export function createPanels({getState,editVehicle,addVehicle,theme,onThemeStora
     const brand=brands.find(b=>b.name===v.brand);
     const logo=brand?`<img src="./assets/brands/${brand.slug}.${brand.slug==='togg'?'svg':'png'}" alt="">`:'';
     const rows=vehicleProperties(v,state.records.filter(r=>r.vehicle===id));
-    show(`<div class="sheetHeading vehicleSheetHeading"><div class="sheetIdentity">${logo}<div><h2 id="sheetTitle" tabindex="-1">${esc(v.name)}</h2><p>Tüm araç özellikleri</p></div></div><button class="sheetEdit" id="sheetEdit" aria-label="Aracı düzenle">${svg('m14 5 5 5M4 20l5-1L21 7a2 2 0 0 0-4-4L5 15z')}<span>Düzenle</span></button></div><div class="sheetContent"><dl class="propertyList">${rows.map(([name,value])=>`<div><dt>${esc(name)}</dt><dd>${value!==null&&value!==undefined&&value!==''?esc(value):'—'}</dd></div>`).join('')}</dl></div>`);
+    const technical=resolveVehicleSpecs(v);
+    const specNote=technical.matched?'Teknik bilgiler Türkiye üretici kataloğundan eşleştirildi. Versiyonlar arasında değişen veya kaynakta olmayan alanlar — gösterilir. Fabrika tüketimi gerçek dolum ortalamanız değildir; WLTP birleşik değeri şehir/yol değeri yerine kullanılmaz.':'Bu marka, model, yıl ve yakıt için doğrulanmış teknik bilgi bulunamadı. Eksik alanlar tahmin edilmez.';
+    show(`<div class="sheetHeading vehicleSheetHeading"><div class="sheetIdentity">${logo}<div><h2 id="sheetTitle" tabindex="-1">${esc(v.name)}</h2><p>Tüm araç özellikleri</p></div></div><button class="sheetEdit" id="sheetEdit" aria-label="Aracı düzenle">${svg('m14 5 5 5M4 20l5-1L21 7a2 2 0 0 0-4-4L5 15z')}<span>Düzenle</span></button></div><div class="sheetContent"><dl class="propertyList">${rows.map(([name,value])=>`<div><dt>${esc(name)}</dt><dd>${value!==null&&value!==undefined&&value!==''?esc(value):'—'}</dd></div>`).join('')}</dl><div class="vehicleSpecNote"><p>${esc(specNote)}</p>${technical.sources.map(source=>`<a href="${esc(source.url)}" target="_blank" rel="noopener noreferrer">${esc(source.name)}${source.archived?' · üreticinin güncel teknik sayfası':''}</a>`).join('')}</div></div>`);
     dialog.querySelector('#sheetEdit').onclick=()=>{dismiss();editVehicle(id);};
   }
   function showSettings(){
@@ -44,6 +51,10 @@ export function createPanels({getState,editVehicle,addVehicle,theme,onThemeStora
     appearance.addEventListener('change',e=>{if(e.target.matches('input[name="theme"]')&&!theme.setPreference(e.target.value))onThemeStorageError?.();});
     dialog.querySelector('#settingsAddVehicle').closest('.settingsGroup').after(appearance);
     dialog.querySelector('#settingsBackup').onclick=()=>{dismiss();openBackup();};
+    const clearButton=document.createElement('button');clearButton.id='settingsClear';clearButton.className='clearDataAction';
+    clearButton.innerHTML=`${svg('M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7M14 10v7')}<span>Tüm verileri temizle</span>${svg('m9 6 6 6-6 6')}`;
+    dialog.querySelector('#settingsBackup').after(clearButton);
+    clearButton.onclick=()=>{dismiss();openClear();};
     dialog.querySelector('#settingsAddVehicle').onclick=()=>{dismiss();addVehicle();};
   }
   function showInfo(){

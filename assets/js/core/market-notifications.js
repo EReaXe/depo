@@ -1,6 +1,18 @@
 import {groupBrandStations} from '../data/fuel-brands.js';
 import {isCurrent} from './prices.js';
 const newsHosts=['www.ntv.com.tr','ntv.com.tr','www.trthaber.com','trthaber.com'];
+export function expectationPriceText(item){
+  const number=n=>new Intl.NumberFormat('tr-TR',{minimumFractionDigits:2,maximumFractionDigits:2}).format(n);
+  const lines=[];
+  for(const row of Array.isArray(item.prices)?item.prices:[]){
+    if(!item.fuels?.includes(row?.fuel))continue;
+    const parts=[];
+    if(Number.isFinite(row.change)&&Math.abs(row.change)>0&&Math.abs(row.change)<=100)parts.push(`${number(Math.abs(row.change))} TL/L ${row.change>0?'zam':'indirim'} beklentisi`);
+    if(Number.isFinite(row.expectedPrice)&&row.expectedPrice>0&&row.expectedPrice<=1000)parts.push(`beklenen litre fiyatı ${number(row.expectedPrice)} TL`);
+    if(parts.length)lines.push(row.fuel+': '+parts.join(' · '));
+  }
+  return lines.length?lines.join('; '):'Tutar bilgisi alınamadı.';
+}
 export function activeExpectations(payload,now=Date.now()){
   if(payload?.kind!=='fuel-expectations'||!Array.isArray(payload.items))return [];
   const result=[],fuels=new Set();

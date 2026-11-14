@@ -43,3 +43,14 @@ header .brand{max-width:60%}
 .iosSheet.sheetDragging{animation:none!important;transition:none!important;will-change:transform,height}.sheetGrabber{cursor:grab;user-select:none;-webkit-user-select:none}.sheetDragging .sheetGrabber{cursor:grabbing}.quickRefill>form{height:auto;flex:1;min-height:0}
 
 .settingsInstall{margin-bottom:12px}.settingsInstall #install{position:static;max-width:none;width:100%;min-height:56px;font-size:16px;line-height:1.4;padding:16px}.installContent{padding:0 24px 28px;font-size:16px;line-height:1.65}.installContent p{margin:0 0 20px}.installContent ol{padding-left:22px;margin:0 0 24px}.installContent li{padding-left:4px;margin:0 0 16px}.installContent .installNote{font-size:13px;color:var(--secondary)}#installBack{width:100%;min-height:48px;font-size:16px;background:var(--surface);color:var(--action);border-color:var(--divider)}
+
+.priceTrend{display:inline-flex;vertical-align:middle;margin-inline-start:2px;line-height:1}
+.priceTrendUp{color:var(--price-up)}
+.priceTrendDown{color:var(--price-down)}
+.priceTrend svg{width:12px;height:14px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.cheapestFuel .priceTrend svg{width:12px;height:14px;stroke:currentColor}
+.cheapestFuel strong{display:flex;align-items:center;flex-wrap:wrap;gap:2px;max-width:100%}
+
+.vehicleSpecNote{margin:16px 4px 4px;font-size:13px;line-height:1.6;color:var(--secondary);overflow-wrap:anywhere}
+.vehicleSpecNote p{margin:0 0 8px}
+.vehicleSpecNote a{display:flex;align-items:center;min-height:44px;color:var(--action);text-decoration:underline;text-underline-offset:3px}

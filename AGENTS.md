@@ -38,7 +38,7 @@ Bu dosya tüm depoya uygulanır. Kullanıcının en son açık talimatı bu kura
 - Yetersiz veride `—` göster; sıfır veya örnek veriyi gerçek sonuç gibi sunma. Kilometre kartta başlangıç kilometresi ve yakıt kayıtlarının en yüksek kilometresi üzerinden gösterilir.
 - Aynı kilometrede aynı yakıt için ikinci dolum ve kilometreyle çelişen tarih sırası reddedilir. Çift yakıtta aynı kilometrede farklı yakıtlar ayrı kaydedilebilir. Yakıt türü bilinmeyen eski kayıtla aynı kilometrede yeni kayıt açılmaz. Kayıtlar araçlara göre ayrılır.
 - Elektrikli araç kaydı desteklenir; kWh hesabı henüz yoktur. Litre hesabını elektrik tüketimi gibi sunma.
-- Fiyatlar ekranı Turkpidya ücretsiz il/marka EPDK bildirimlerini gösterir. Bu değerleri tek tek istasyonların kesin pompa fiyatı gibi sunma.
+- Fiyatlar ekranı Döviz.com il/marka tablolarını ve Shell resmî ilçe fiyatlarının il/yaka medyanını gösterir. Bu değerleri tek tek istasyonların kesin pompa fiyatı gibi sunma.
 
 ## Gezinme ve beta kapsamı
 
@@ -50,7 +50,7 @@ Bu dosya tüm depoya uygulanır. Kullanıcının en son açık talimatı bu kura
 - Araç yoksa ortalanmış **“Garaja araç ekleyin”** metni ve çalışan araç ekleme düğmesi gösterilir.
 - Araç varsa Ana Sayfa kart düzenindedir. İlk kart marka logosu/adı, model, plaka veya plaka ekleme bağlantısı, kilometre, ortalama tüketim ve maliyet içerir.
 - Araç kartındaki ok doğrudan düzenlemeye gitmez: araç özellikleri panelini açar. Panelin sağ üstündeki kalem/**Düzenle** araç düzenlemesini açar. Plaka bağlantısı mevcut aracın 6. adımına gider.
-- Araç özelliklerinde kaydedilmemiş motor, kasa tipi, depo hacmi ve şehir/yol tüketimi gibi bilgiler `—` gösterilir; modele bakarak tahmin edilmez.
+- Araç özelliklerinde motor, kasa tipi, depo hacmi ve şehir/yol tüketimi yalnız kaynaklı yerel katalogdaki kesin ortak eşleşmeyle gösterilir. Model adından tahmin edilmez. Ek motor/versiyon seçimi eklenmez; belirsiz alanlar `—` kalır. WLTP birleşik değer ayrı etiketlenir; dolum hesabına katılmaz.
 - Ayarlardan araç ekleme, tanıtımı yeniden açma ve yedek işlemlerine erişilir. Uygulamayı yükle seçeneği Ayarlarda her zaman görünür; doğrudan kurulum desteklenmiyorsa cihaza uygun rehber açılır.
 
 ## Hızlı dolum
@@ -103,18 +103,14 @@ Bu dosya tüm depoya uygulanır. Kullanıcının en son açık talimatı bu kura
 
 ## Fiyatlar ekranı ve veri yenileme
 
-- Ücretsiz, anahtarsız kaynak Turkpidya fuel-brands veri kümesidir: https://turkpidya.com/wp-json/turkpidya-data/v1/tools/datasets/fuel-brands. Kaynağı görünür ve tıklanabilir biçimde belirt; API belgesindeki atıf bağlantısını koru.
-- Bunlar son 30 günlük il/marka EPDK bildirimleridir; tek istasyonun fiyatı, canlı pompa verisi veya fiyat garantisi değildir. İstanbul Anadolu/Avrupa ayrı satırlardır. Kocaeli ve Sakarya kaynak adları eşleştirilir. Kaynakta olmayan LPG — gösterilir.
-- Kaynak kuruş değerlerini TL'ye çevir; her satırın bildirildiği tarihi koru. Veri kümesi eskidiyse en düşük seçimine katma. İl/yakıt medyanından %25'ten fazla sapan değerler kontrol etiketiyle gösterilir ve en düşük seçiminden çıkarılır; kaynak sayıları sessizce değiştirilmez.
-- scripts/sync-prices.mjs veriyi assets/data/brand-prices.json içine alır. İş akışı yaklaşık 30 dakikada bir haberleri kontrol edip Pages'e yayınlar; fiyat kaynağı en az 6 saat arayla kontrol edilir; tarayıcı görünür Fiyatlar ekranında 5 dakikada bir yerel dosyayı kontrol eder. Ücretli servis/anahtar gerekmez.
-- 81 il elle seçilebilir. GPS il sınırı poligonlarıyla cihazda eşleşir; kesin koordinatlar üçüncü tarafa gönderilmez. Seçili il depo-price-city anahtarında tutulur. Sınır verisinin kaynağı/lisansı docs/GEO_SOURCE.json ve docs/GEO_LICENSE.md içinde korunur.
-- Son bilinen marka fiyatını Hızlı doluma en yakın istasyon fiyatı diye aktarma. Ayrıntılar docs/PRICES.md içindedir.
-- Kullanıcı beta yayını için EReaXe/depo GitHub deposu ve GitHub Pages yayınını açıkça yetkilendirdi. Gelecek yayınlarda o anki kullanıcı kapsamını esas al.
+- Fiyat kaynağı Döviz.com il/marka tabloları ve Shell resmî fiyat servisidir. scripts/sync-prices.mjs 81 il için İstanbul yakalarını ayırarak 82 tabloyu ve Shell API’sini alır; tarayıcı yalnız yerel assets/data/brand-prices.json dosyasını okur. Döviz.com satır tarihleri korunur. Shell’de yayın tarihi yoktur; kontrol tarihi gösterilir ve ilçe fiyatlarının il/yaka medyanı açıkça belirtilir. Eksik fiyat tahminle doldurulmaz. 24 saatten eski gözlemler ve 10 günden eski Döviz.com tarihleri karşılaştırmaya alınmaz. Hatalı yenilemede eski satırın tarihi korunur. Fiyatlar istasyon pompa fiyatı garantisi değildir. Mevcut 6 saatlik kaynak kontrolü ve 5 dakikalık tarayıcı yenilemesi korunur.
+- Kaynaklar görünür ve tıklanabilir olmalı: https://www.doviz.com/akaryakit-fiyatlari ve https://pompafiyat.turkiyeshell.com/. Shell ürün kodları resmî yanıttan doğrulanır. İstanbul yakaları ilçe adına göre ayrılır, bilinmeyen ilçe tahmin edilmez. İl/yakıt medyanından %25’ten fazla sapan kaynak değerleri değiştirilmez; kontrol etiketiyle en düşük seçiminden çıkarılır.
+- 81 il elle seçilebilir. GPS yerel il sınırlarında eşleştirilir; kesin koordinatlar dış servislere gönderilmez. İl seçimi depo-price-city anahtarında saklanır; coğrafi kaynak/lisans belgeleri korunur.
 
 ## Fiyatlar için güncel marka seçimi
 
 - Fiyatlar ekranında ana markalar Petrol Ofisi, Opet, Shell, TotalEnergies, Aytemiz, Lukoil ve Alpet'tir. GO, Kadoil, Sunpet ve M Oil kapalı başlayan “Diğer markalar” bölümünde yer alır. Diğer markalar listelenmez; en düşük fiyat seçimi ve fiyat vurgusu yalnızca 7 ana marka arasında yapılır. Diğer markalar bölümünde fiyat vurgusu bulunmaz. Gerçek logolar assets/brands/fuel altında yerel ve çevrimdışı yüklenir.
-- LPG için Turkpidya'ya ek olarak Petrol Ofisi ve Aytemiz resmî il listeleri kullanılır. Kaynaklar tıklanabilir gösterilir; KDV dahil fiyat, marka, il/yaka ve kaynak tarihi korunur. Petrol Ofisi geçerlilik tarihi yayımlamadığında yalnız kontrol tarihi gösterilir. 24 saatten eski LPG gözlemleri en düşük karşılaştırmasına alınmaz. Başarısız yenilemede eski veri ve tarihi korunur; başka marka LPG fiyatı eşlenmez.
+- LPG de Döviz.com ve Shell kaynaklarından alınır. Kaynakta olmayan fiyat — gösterilir; başka markadan fiyat eşlenmez. Eski Turkpidya/PO/Aytemiz dosya biçimleri önbellek geçişi için okunabilir; yeni eşitleme bunları çağırmaz.
 
 ## Sekmeyi hatırlama
 
@@ -147,3 +143,11 @@ Bu dosya tüm depoya uygulanır. Kullanıcının en son açık talimatı bu kura
 - Fiyatlar ekranının üstünde yalnızca güncel, süresi dolmamış zam/indirim beklentisi haberi varsa kaynak ve yayın tarihiyle bir alan görünür. Beklenti kesin fiyat gibi sunulmaz. Üstteki bildirim paneli beklenti haberlerini ve seçili ildeki gerçek fiyat değişikliklerini gösterir; yalnız kaynak kontrol tarihi değişince veya bir il ilk kez yüklenince bildirim oluşturulmaz. Okunmamış rozet, okundu durumu ve iki bildirim türünün tercihleri bu tarayıcıda saklanır. Bildirimler uygulama açık ve görünürken kontrol edilir; kapalı uygulamaya push gönderilmez.
 - Beklenti kaynağı NTV ve TRT Haber RSS/Atom akışlarıdır. Haber tarihi ileri taşınmaz; süre bitince üst alan gizlenir. Örnek haber veya fiyat gerçek içerik olarak eklenmez. Ayrıntılar docs/NOTIFICATIONS.md içindedir.
 - Bildirim durumu depo-notifications-v1 anahtarındadır; araç/yakıt verilerinden ayrıdır. İzin isteme, kapalıyken push veya arka plan hizmeti mevcut kapsamda yoktur.
+
+Ayarlar > Veriler ve uygulama > Tüm verileri temizle, araç ve dolum sayılarını gösteren onay panelini açar. Önce yedek indirilebilir; onay kutusu ve kalıcı silme düğmesi olmadan veri silinmez. Başarılı işlem garajı boşaltıp Ana Sayfa’ya döner; saklama hatasında mevcut kayıtlar korunur. Tema, seçili il, tanıtım ve bildirim tercihleri ile indirilmiş yedekler korunur.
+
+Fiyatın yanında aynı il/yaka, marka, yakıt ve kaynaktaki son farklı fiyata göre artışta yeşil yukarı, düşüşte kırmızı aşağı ok gösterilir (kullanıcının açık renk tercihi). Okun erişilebilir açıklaması önceki fiyatı içerir. İlk gözlemde, kaynak değişince ve eski/geçersiz fiyatta ok yoktur. Fiyat sabit kaldığında son değişim yönü korunur; yenileme kendi başına ok oluşturmaz. Geçmiş veri kaynağın geçmiş servisi değildir; bundan sonraki eşitlemelerle birikir.
+
+Ana Sayfa’da araç kartının hemen altında yalnız geçerli zam/indirim beklentisi haberi olduğunda SON DAKİKA şeridi görünür. Mevcut NTV/TRT haber akışı, kaynak doğrulaması ve süre sonu kuralları kullanılır; kaynak ve özgün yayın tarihi gösterilir. Haber yokken veya süre dolunca alan gizlenir. Birden fazla geçerli haber aynı alanda listelenir; otomatik kayan/yanıp sönen metin yoktur. Beklenti kesin fiyat olarak sunulmaz.
+
+Beklenti haberleri SON DAKİKA şeridinde, Fiyatlar beklenti alanında ve Bildirimlerde kaynaktan açıkça çıkarılabilen tutarı da gösterir. Zam/indirim miktarı TL/L olarak etiketlenir; kaynak beklenen litre fiyatını açıkça veriyorsa ayrı belirtilir. Mevcut il fiyatına zam eklenerek tahmini yeni fiyat üretilmez. RSS başlık/özetindeki geleceğe yönelik açık tutar cümleleri kullanılır; yakıt eşleşmesi belirsiz veya tutarlar çelişkiliyse gösterilmez. Tutar çıkarılamazsa “Tutar bilgisi alınamadı.” yazılır. Eski haber kayıtları geçerli kalır; aynı haber güncellenirse mevcut bildirim metni güncellenir, yeniden okunmamış bildirim oluşturulmaz.

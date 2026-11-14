@@ -25,3 +25,6 @@
 .transferButtons{display:flex;gap:10px;flex-wrap:wrap}
 .transferButtons button{flex:1;min-height:48px;font-size:15px;background:var(--surface);border-color:var(--divider);color:var(--action)}
 #settingsPortal{margin-top:12px}
+
+.settingsGroup .clearDataAction{color:var(--danger)}
+.clearDataConfirm{background:var(--danger);color:#fff;margin-bottom:12px}
