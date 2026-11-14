@@ -1,3 +1,4 @@
+import {garageMarkup,withoutVehicle} from './ui/garage.js';
 import {createNotificationCenter} from './ui/notifications.js';
 import {createInstallController} from './ui/install.js';
 import {createBackupPanel} from './ui/backup-panel.js';
@@ -5,7 +6,7 @@ import {createPricesScreen} from './ui/prices-screen.js';
 import {createQuickRefill} from './ui/quick-refill.js';
 import {recordDetails} from './core/refill.js';
 import {createPanels} from './ui/panels.js';
-import {renderHomeCard,homeExpectationMarkup} from './ui/home-card.js';
+import {renderHomeCard,homeExpectationMarkup,dashboardMarkup,spendingMarkup} from './ui/home-card.js';
 import {createVehicleWizard} from './ui/vehicle-wizard.js';
 import {vehicleDetails} from './data/vehicles.js';
 import {calculate} from './core/calc.js';
@@ -33,7 +34,7 @@ createInstallController({button:$('install'),onGuide:()=>panels.showInstallGuide
 if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>toast('Çevrimdışı kullanım hazırlanamadı. İnternet bağlantısıyla tekrar aç.'));
 render();
 
-const screenKey='depo-last-screen',availableScreens=['home','prices'];
+const screenKey='depo-last-screen',availableScreens=['home','reports','vehicles','prices'];
 let currentScreen='home';
 try{const savedScreen=localStorage.getItem(screenKey);if(availableScreens.includes(savedScreen))currentScreen=savedScreen;}catch{ /* Storage may be unavailable; start at home. */ }
 function setScreen(screen){
@@ -48,8 +49,11 @@ function setScreen(screen){
   $('homeEmpty').hidden=screen!=='home'||hasVehicle;
   $('prices').hidden=screen!=='prices';
   if(screen==='prices')pricesScreen?.show();else pricesScreen?.hide();
-  $('garage').hidden=screen!=='vehicles'&&(screen!=='reports'||!hasVehicle);
+  $('garage').hidden=true;
+  $('vehiclesScreen').hidden=screen!=='vehicles';
   $('homeCards').hidden=screen!=='home'||!hasVehicle;
+  $('homeDashboard').hidden=screen!=='home'||!hasVehicle;
+  $('monthlyReport').hidden=screen!=='reports'||!hasVehicle;
   $('homeExpectations').hidden=screen!=='home'||!hasVehicle||!$('homeExpectations').innerHTML;
   $('overview').hidden=!hasVehicle||screen!=='reports';
   $('calculationHint').hidden=$('overview').hidden;
@@ -70,8 +74,39 @@ function renderHomeExpectations(){
   if(host.innerHTML!==markup)host.innerHTML=markup;
   host.hidden=currentScreen!=='home'||!state.vehicles.length||!markup;
 }
+let reportMonth=today().slice(0,7);
+function renderDashboard(){
+  $('garageVehicles').innerHTML=garageMarkup(state);
+  const rows=state.records.filter(r=>r.vehicle===state.selected);
+  $('homeDashboard').innerHTML=state.selected?dashboardMarkup(rows,today().slice(0,7)):'';
+  $('monthlyReportContent').innerHTML=spendingMarkup(rows,reportMonth);
+  $('reportMonth').value=reportMonth;
+}
+$('reportMonth').onchange=e=>{if(/^\d{4}-\d{2}$/.test(e.target.value)){reportMonth=e.target.value;renderDashboard();}};
+$('homeDashboard').onclick=e=>{
+  const target=e.target.closest('[data-open-report]');if(!target)return;
+  reportMonth=today().slice(0,7);renderDashboard();setScreen('reports');
+  const heading=target.dataset.openReport==='history'?$('historyTitle'):$('monthlyReportTitle');
+  heading.focus({preventScroll:true});heading.scrollIntoView({block:'start',behavior:'instant'});
+};
+function removeVehicle(id){
+  const vehicle=state.vehicles.find(v=>v.id===id);if(!vehicle)return false;
+  const count=state.records.filter(r=>r.vehicle===id).length;
+  if(!confirm(vehicle.name+' ve bu araca ait '+count+' dolum kaydı kalıcı olarak silinsin mi?'))return false;
+  if(!commit(withoutVehicle(state,id)))return false;
+  toast('Araç ve dolum kayıtları silindi.');
+  if(currentScreen==='vehicles')$('garageAddVehicle').focus({preventScroll:true});
+  return true;
+}
+$('garageAddVehicle').onclick=()=>openVehicle();
+$('garageVehicles').onclick=e=>{
+  const select=e.target.closest('[data-garage-select]');
+  if(select){const id=select.dataset.garageSelect;if(state.selected===id)return;if(commit({...state,selected:id})){const button=[...$('garageVehicles').querySelectorAll('[data-garage-select]')].find(b=>b.dataset.garageSelect===id);button?.focus({preventScroll:true});toast('Seçili araç güncellendi.');}return;}
+  const details=e.target.closest('[data-garage-details]');if(details){panels.showVehicle(details.dataset.garageDetails);return;}
+  const remove=e.target.closest('[data-garage-delete]');if(remove)removeVehicle(remove.dataset.garageDelete);
+};
 const originalRender=render;
-render=function(){originalRender();renderHomeCard({state,openVehicle,showVehicle:id=>panels.showVehicle(id),onInfo:()=>panels.showInfo(),selectVehicle:id=>commit({...state,selected:id})});renderHomeExpectations();setScreen(currentScreen);};
+render=function(){originalRender();renderDashboard();renderHomeCard({state,openVehicle,showVehicle:id=>panels.showVehicle(id),onInfo:()=>panels.showInfo(),});renderHomeExpectations();setScreen(currentScreen);};
 render();
 
 import {initWelcome} from './ui/welcome.js';
@@ -79,10 +114,10 @@ initWelcome({hasVehicles:()=>state.vehicles.length>0||location.hash.startsWith('
 
 const vehicleWizard=createVehicleWizard({
   save(vehicle){const next=structuredClone(state);const index=next.vehicles.findIndex(v=>v.id===vehicle.id);if(index>=0)next.vehicles[index]=vehicle;else next.vehicles.push(vehicle);next.selected=vehicle.id;if(commit(next)){toast('Araç garaja eklendi.');return true;}return false;},
-  remove(id){if(!confirm('Bu araç ve tüm yakıt kayıtları silinsin mi?'))return false;const next=structuredClone(state);next.vehicles=next.vehicles.filter(v=>v.id!==id);next.records=next.records.filter(r=>r.vehicle!==id);next.selected=next.vehicles[0]?.id||null;return commit(next);}
+  remove:removeVehicle
 });
 
-const panels=createPanels({getState:()=>state,editVehicle:id=>openVehicle(id),addVehicle:()=>openVehicle(),theme,onThemeStorageError:()=>toast('Tema uygulandı ancak bu tarayıcıda saklanamadı.'),openBackup:()=>backupPanel.open(),openClear:()=>backupPanel.openClear()});
+const panels=createPanels({getState:()=>state,editVehicle:id=>openVehicle(id),theme,onThemeStorageError:()=>toast('Tema uygulandı ancak bu tarayıcıda saklanamadı.'),openBackup:()=>backupPanel.open(),openClear:()=>backupPanel.openClear()});
 $('openSettings').onclick=()=>panels.showSettings();
 
 const quickRefill=createQuickRefill({getState:()=>state,save(record){const next=structuredClone(state);next.records.push(record);try{validate(next);}catch(error){toast(error.message);return false;}if(commit(next)){toast('Dolum kaydedildi.');return true;}return false;}});
@@ -99,3 +134,10 @@ backupPanel.receiveLocation();
 window.addEventListener('hashchange',()=>backupPanel.receiveLocation());
 
 notificationCenter.start();
+
+// Keep the app scale fixed without blocking ordinary scrolling or text entry.
+window.addEventListener('wheel',event=>{if(event.ctrlKey||event.metaKey)event.preventDefault();},{passive:false});
+window.addEventListener('keydown',event=>{
+  if((event.ctrlKey||event.metaKey)&&(['+','-','=','0'].includes(event.key)||['NumpadAdd','NumpadSubtract','Numpad0'].includes(event.code)))event.preventDefault();
+});
+for(const type of ['gesturestart','gesturechange','gestureend'])document.addEventListener(type,event=>event.preventDefault(),{passive:false});

@@ -23,12 +23,11 @@ export function homeCardMarkup(vehicle,records){
     ${m.mixedFuels?'<p class="mixedFuelNote">Farklı yakıtların dolumları kaydedildi. Birleşik tüketim hesabı henüz desteklenmiyor.</p>':''}
   </article>`;
 }
-export function renderHomeCard({state,openVehicle,showVehicle,onInfo,selectVehicle}){
+export function renderHomeCard({state,openVehicle,showVehicle,onInfo}){
   const host=document.getElementById('homeCards');
   const vehicle=state.vehicles.find(v=>v.id===state.selected);
   if(!vehicle){host.innerHTML='';return;}
   host.innerHTML=homeCardMarkup(vehicle,state.records.filter(r=>r.vehicle===vehicle.id));
-  if(state.vehicles.length>1){const label=document.createElement('label');label.className='homeVehicleSwitch';label.textContent='Araç değiştir';const select=document.createElement('select');select.setAttribute('aria-label','Ana Sayfa aracı');for(const v of state.vehicles){const option=new Option(v.name,v.id);option.selected=v.id===vehicle.id;select.append(option);}select.onchange=()=>selectVehicle(select.value);label.append(select);host.append(label);}
   document.getElementById('homeVehicleDetails').onclick=()=>showVehicle(vehicle.id);
   document.getElementById('homeVehiclePlate').onclick=()=>openVehicle(vehicle.id,6);
   document.getElementById('homeConsumptionInfo').onclick=onInfo;
@@ -38,4 +37,22 @@ export function homeExpectationMarkup(items,now=Date.now()){
   const active=activeExpectations({kind:'fuel-expectations',items},now);
   if(!active.length)return '';
   return `<aside class="homeBreaking" aria-label="Güncel yakıt fiyatı beklentileri"><h2>SON DAKİKA</h2><div class="homeBreakingNews">${active.map(item=>`<article><p>${escape(item.title)}</p><p class="expectationAmount">${escape(expectationPriceText(item))}</p><a href="${escape(item.url)}" target="_blank" rel="noopener noreferrer">${escape(item.source)} · ${new Date(item.publishedAt).toLocaleString('tr-TR',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</a></article>`).join('')}<small>Zam/indirim beklentisidir; kesinleşmiş fiyat değildir.</small></div></aside>`;
+}
+
+export function monthlySpending(records,month){
+  const rows=records.filter(r=>r.date?.slice(0,7)===month);
+  return {rows:[...rows].sort((a,b)=>b.date.localeCompare(a.date)||b.km-a.km),total:rows.reduce((sum,r)=>sum+r.amount,0)};
+}
+export function spendingMarkup(records,month){
+  const {rows,total}=monthlySpending(records,month);
+  return `<p class="monthlyTotal">${rows.length?number(total,2)+' <small>TL</small>':'—'}<span>${rows.length?`${rows.length} yakıt işlemi`:'Bu ay kayıt yok'}</span></p><dl class="spendingItems">${['Yakıt','MTV','Bakım','Lastik','Muayene','Diğer'].map((name,i)=>`<div><dt>${name}</dt><dd>${i===0&&rows.length?number(total,2)+' TL':'—'}</dd></div>`).join('')}</dl>`;
+}
+export function recentMarkup(records){
+  const rows=[...records].sort((a,b)=>b.date.localeCompare(a.date)||b.km-a.km).slice(0,3);
+  return rows.length?`<ul class="recentOperations">${rows.map(r=>`<li><span><strong>${escape(r.fuel||'Yakıt')} dolumu</strong><small>${new Date(r.date+'T12:00:00').toLocaleDateString('tr-TR',{day:'numeric',month:'long'})} · ${number(r.litres,2)} L</small></span><b>${number(r.amount,2)} TL</b></li>`).join('')}</ul>`:'<p class="dashboardEmpty">Henüz işlem yok. Eklediğiniz yakıt kayıtları burada görünecek.</p>';
+}
+export function dashboardMarkup(records,month){
+  const label=new Date(month+'-01T12:00:00').toLocaleDateString('tr-TR',{month:'long',year:'numeric'});
+  const arrow=icon('m9 6 6 6-6 6');
+  return `<section class="dashboardCard"><h2><button class="dashboardLink" data-open-report="monthly"><span>Aylık harcama<small>${label}</small></span>${arrow}</button></h2>${spendingMarkup(records,month)}<p class="dashboardNote">Yakıt kayıtlarınızdan hesaplanır. Diğer giderleri kaydetme henüz desteklenmiyor.</p></section><section class="dashboardCard"><h2 class="dashboardHeading">Yaklaşan işler</h2><p class="dashboardEmpty">Henüz planlanmış iş yok.</p><p class="dashboardNote">MTV, bakım, lastik ve muayene takviminiz burada yer alacak. İş ekleme henüz kullanıma açık değil.</p></section><section class="dashboardCard"><h2><button class="dashboardLink" data-open-report="history"><span>Son işlemler</span>${arrow}</button></h2>${recentMarkup(records)}</section>`;
 }

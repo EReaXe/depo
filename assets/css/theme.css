@@ -1,7 +1,7 @@
 :root{
   --app-bg:#f2f2f7;--outer:#e5e5ea;--surface:#fff;--text:#1c1c1e;
   --secondary:#62626a;--divider:#d9d9df;--action:#0066cc;--action-hover:#004c99;
-  --accent:#078dc0;--tint:#e8f1fc;--hover:#e7e7ed;--disabled:#8b8b94;
+  --garage-glow:#0066cc2e;--accent:#078dc0;--tint:#e8f1fc;--hover:#e7e7ed;--disabled:#8b8b94;
   --card-start:#f5fbff;--card-end:#eaf2fa;--card-text:#142c3c;
   --card-secondary:#435d70;--card-line:#cfdde7;--card-surface:#ffffff9e;
   --nav-bg:rgba(255,255,255,.92);--scrollbar:#c7c7cc;--selection:#c9def8;
@@ -12,7 +12,7 @@
 :root[data-theme="dark"]{
   --app-bg:#1c1c1e;--outer:#000;--surface:#2c2c2e;--text:#f2f2f7;
   --secondary:#b1b1ba;--divider:#48484c;--action:#70b5ff;--action-hover:#a8d2ff;
-  --accent:#68c6ee;--tint:#193b5d;--hover:#38383c;--disabled:#8e8e98;
+  --garage-glow:#70b5ff38;--accent:#68c6ee;--tint:#193b5d;--hover:#38383c;--disabled:#8e8e98;
   --card-start:#183449;--card-end:#162c42;--card-text:#f0f6fc;
   --card-secondary:#bdd0e2;--card-line:#3e5870;--card-surface:#243e55;
   --nav-bg:rgba(44,44,46,.96);--scrollbar:#68686e;--selection:#254e75;

@@ -12,7 +12,7 @@ export function vehicleProperties(vehicle,records){
   const km=records.reduce((max,r)=>Math.max(max,r.km),vehicle.currentKm??0);
   return [['Marka',vehicle.brand||vehicle.name],['Model',vehicle.model],['Yıl',vehicle.year],['Plaka',vehicle.plate],['Yakıt',vehicle.fuel],['Vites',vehicle.transmission],['Araç tipi',spec.body],['Motor',spec.engine],['Depo',spec.tankLitres!==null?`${number(spec.tankLitres)} L`:null],['Şehir / Yol',consumption],...(combined?[['Fabrika birleşik',combined]]:[]),['Renk',vehicle.color],['Kilometre',vehicle.currentKm!==undefined||records.length?`${new Intl.NumberFormat('tr-TR').format(km)} km`:null]];
 }
-export function createPanels({getState,editVehicle,addVehicle,theme,onThemeStorageError,openBackup,openClear}){
+export function createPanels({getState,editVehicle,theme,onThemeStorageError,openBackup,openClear}){
   const dialog=document.createElement('dialog');dialog.className='iosSheet';dialog.setAttribute('aria-labelledby','sheetTitle');document.body.append(dialog);
   const settings=document.getElementById('settings');
   const storageNote=document.getElementById('storageNote');
@@ -43,19 +43,18 @@ export function createPanels({getState,editVehicle,addVehicle,theme,onThemeStora
     dialog.querySelector('#sheetEdit').onclick=()=>{dismiss();editVehicle(id);};
   }
   function showSettings(){
-    show(`<div class="sheetHeading"><div><h2 id="sheetTitle" tabindex="-1">Ayarlar</h2><p>Depo · Beta</p></div></div><div class="sheetContent" id="settingsContent"><section class="settingsGroup"><button id="settingsAddVehicle">${svg('M12 5v14M5 12h14')}<span>Garaja araç ekle</span>${svg('m9 6 6 6-6 6')}</button></section><h3 class="groupLabel">Veriler ve uygulama</h3><section class="settingsGroup"><button id="settingsBackup">${svg('M4 7h16v14H4zM8 7V3h8v4M8 12h8M8 16h5')}<span>Yedekleme ve aktarım</span>${svg('m9 6 6 6-6 6')}</button></section><div id="settingsPortal"></div></div>`);
+    show(`<div class="sheetHeading"><div><h2 id="sheetTitle" tabindex="-1">Ayarlar</h2><p>Depo · Beta</p></div></div><div class="sheetContent" id="settingsContent"><h3 class="groupLabel">Veriler ve uygulama</h3><section class="settingsGroup"><button id="settingsBackup">${svg('M4 7h16v14H4zM8 7V3h8v4M8 12h8M8 16h5')}<span>Yedekleme ve aktarım</span>${svg('m9 6 6 6-6 6')}</button></section><div id="settingsPortal"></div></div>`);
     dialog.querySelector('#settingsPortal').append(settings,storageNote);settings.hidden=false;storageNote.hidden=false;
     const installGroup=document.createElement('section');installGroup.className='settingsGroup settingsInstall';installGroup.append(install);dialog.querySelector('#settingsContent').prepend(installGroup);
     const appearance=document.createElement('fieldset');appearance.className='themeSettings';
     appearance.innerHTML=`<legend>Görünüm</legend><div class="themeOptions">${[['system','Cihaz teması','Cihazınızın açık veya koyu temasını izler.'],['light','Açık',''],['dark','Koyu','']].map(([value,label,note])=>`<label><span>${label}${note?`<small>${note}</small>`:''}</span><input type="radio" name="theme" value="${value}" ${theme.getPreference()===value?'checked':''}></label>`).join('')}</div>`;
     appearance.addEventListener('change',e=>{if(e.target.matches('input[name="theme"]')&&!theme.setPreference(e.target.value))onThemeStorageError?.();});
-    dialog.querySelector('#settingsAddVehicle').closest('.settingsGroup').after(appearance);
+    installGroup.after(appearance);
     dialog.querySelector('#settingsBackup').onclick=()=>{dismiss();openBackup();};
     const clearButton=document.createElement('button');clearButton.id='settingsClear';clearButton.className='clearDataAction';
     clearButton.innerHTML=`${svg('M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7M14 10v7')}<span>Tüm verileri temizle</span>${svg('m9 6 6 6-6 6')}`;
     dialog.querySelector('#settingsBackup').after(clearButton);
     clearButton.onclick=()=>{dismiss();openClear();};
-    dialog.querySelector('#settingsAddVehicle').onclick=()=>{dismiss();addVehicle();};
   }
   function showInfo(){
     show(`<div class="sheetHeading"><h2 id="sheetTitle" tabindex="-1">Ortalama tüketim</h2></div><div class="sheetContent sheetExplanation"><p>İlk tam dolum başlangıç noktasıdır. Bir sonraki tam doluma kadar alınan tüm yakıt, bu aralıkta gidilen mesafeye bölünür.</p><p>Kısmi dolumlar da hesaba katılır. Tüketim ve kilometre maliyetini görmek için farklı kilometrelerde en az iki tam dolum kaydı gerekir.</p><p>Elektrikli araçlar için kWh hesabı henüz desteklenmiyor.</p></div>`);

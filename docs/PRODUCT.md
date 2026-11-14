@@ -8,7 +8,7 @@ Hızlı dolumda yakıt türü, ödenen TL, TL/L fiyatı ve güncel kilometre gir
 
 Ana Sayfa araçsızken garaja araç ekleme çağrısı, araç varken özet kartını gösterir. Kartın oku özellikler panelini, paneldeki Düzenle araç akışını açar. Tanıtım tamamlandığında Ana Sayfa'ya dönülür.
 
-Alt menü Ana Sayfa, Raporlar, +, Araçlar, Fiyatlar sırasındadır. Raporlar/Araçlar beta için pasiftir; uygulama içi bildirimler aktiftir; istasyon fiyatı kaynağı henüz bağlı değildir. Sol menü Ayarları açar: araç ekleme, tanıtım, yedekleme ve PWA kurulumu veya cihaza uygun kurulum rehberi.
+Alt menü Ana Sayfa, Raporlar, +, Araçlar, Fiyatlar sırasındadır. Raporlar ve Araçlar etkindir; uygulama içi bildirimler aktiftir; istasyon fiyatı kaynağı henüz bağlı değildir. Sol menü Ayarları açar: tanıtım, yedekleme ve PWA kurulumu veya cihaza uygun kurulum rehberi.
 
 Kayıtlar cihazdaki localStorage alanındadır; hesap ve bulut senkronizasyonu yoktur. JSON yedekleme vardır. Kullanıcı verileri örnek verilerle karıştırılmaz ve eksik özellikler tahmin edilmez. Mevcut uygulama adı Depo; yeni isim henüz onaylanmamıştır.
 
@@ -20,7 +20,7 @@ Fiyat kaynağı Döviz.com il/marka tabloları ve Shell resmî fiyat servisidir.
 
 Fiyatlar ekranında ana markalar Petrol Ofisi, Opet, Shell, TotalEnergies, Aytemiz, Lukoil ve Alpet'tir. GO, Kadoil, Sunpet ve M Oil kapalı başlayan “Diğer markalar” bölümünde yer alır. Diğer markalar listelenmez; en düşük fiyat seçimi ve fiyat vurgusu yalnızca 7 ana marka arasında yapılır. Diğer markalar bölümünde fiyat vurgusu bulunmaz. Gerçek logolar assets/brands/fuel altında yerel ve çevrimdışı yüklenir.
 
-Son açık sekme bu tarayıcıda depo-last-screen anahtarıyla hatırlanır. Yenilemede veya uygulama yeniden açıldığında Ana Sayfa ya da Fiyatlar sekmesine dönülür; kayıt yoksa, değer geçersizse veya depolama kullanılamıyorsa Ana Sayfa açılır. Beta için pasif sekmeler geri yüklenmez.
+Son açık sekme bu tarayıcıda depo-last-screen anahtarıyla hatırlanır. Yenilemede veya uygulama yeniden açıldığında Ana Sayfa, Raporlar, Araçlar ya da Fiyatlar sekmesine dönülür; kayıt yoksa, değer geçersizse veya depolama kullanılamıyorsa Ana Sayfa açılır. Geçersiz sekmeler geri yüklenmez.
 
 Alttan açılan Ayarlar, araç özellikleri, tüketim açıklaması, Hızlı dolum ve il seçimi panelleri ortak tutamaçtan sürüklenir. Panel hareketi parmağı takip eder; yukarı sürükleme genişletir, aşağı sürükleme geniş paneli küçültür veya kapatır. İçerik kaydırması ayrıdır; tutamaç klavyeyle de kullanılabilir. Kaydedilmemiş dolum uyarısı sürükleyerek kapatmada da korunur.
 
@@ -38,6 +38,12 @@ Fiyatın yanında aynı il/yaka, marka, yakıt ve kaynaktaki son farklı fiyata 
 
 Araç özellikleri paneli, yerel kaynaklı teknik katalogda marka/model/yıl/yakıt ve varsa mevcut vites bilgisiyle eşleşen ortak alanları otomatik gösterir; ek motor/versiyon seçimi yoktur. Birden çok versiyonda farklı olan veya doğrulanmayan motor, kasa, depo ve şehir/yol bilgileri — kalır. Şehir/yol yalnız ayrı NEDC değerleri doğrulanırsa gösterilir; WLTP birleşik tüketim ayrı Fabrika birleşik satırıdır ve gerçek dolum hesabına katılmaz. Veriler cihazda eşleşir, araç kayıtlarına yazılmaz; eski araçlar ve yedek şeması korunur. Başlangıç kapsamı: Clio 2024/2025 için belgelenen yakıt/vitesler, Tiggo 7 ve Tiggo 8 2026 benzinli. Tüm katalog için teknik veri iddiası yoktur. Ayrıntılar docs/VEHICLE_SPECS.md.
 
-Ana Sayfa’da araç kartının hemen altında yalnız geçerli zam/indirim beklentisi haberi olduğunda SON DAKİKA şeridi görünür. Mevcut NTV/TRT haber akışı, kaynak doğrulaması ve süre sonu kuralları kullanılır; kaynak ve özgün yayın tarihi gösterilir. Haber yokken veya süre dolunca alan gizlenir. Birden fazla geçerli haber aynı alanda listelenir; otomatik kayan/yanıp sönen metin yoktur. Beklenti kesin fiyat olarak sunulmaz.
+Ana Sayfa’da Ana Sayfa özet kartlarının altında yalnız geçerli zam/indirim beklentisi haberi olduğunda SON DAKİKA şeridi görünür. Mevcut NTV/TRT haber akışı, kaynak doğrulaması ve süre sonu kuralları kullanılır; kaynak ve özgün yayın tarihi gösterilir. Haber yokken veya süre dolunca alan gizlenir. Birden fazla geçerli haber aynı alanda listelenir; otomatik kayan/yanıp sönen metin yoktur. Beklenti kesin fiyat olarak sunulmaz.
 
 Beklenti haberleri SON DAKİKA şeridinde, Fiyatlar beklenti alanında ve Bildirimlerde kaynaktan açıkça çıkarılabilen tutarı da gösterir. Zam/indirim miktarı TL/L olarak etiketlenir; kaynak beklenen litre fiyatını açıkça veriyorsa ayrı belirtilir. Mevcut il fiyatına zam eklenerek tahmini yeni fiyat üretilmez. RSS başlık/özetindeki geleceğe yönelik açık tutar cümleleri kullanılır; yakıt eşleşmesi belirsiz veya tutarlar çelişkiliyse gösterilmez. Tutar çıkarılamazsa “Tutar bilgisi alınamadı.” yazılır. Eski haber kayıtları geçerli kalır; aynı haber güncellenirse mevcut bildirim metni güncellenir, yeniden okunmamış bildirim oluşturulmaz.
+
+
+Ana Sayfa araç kartını Aylık harcama, Yaklaşan işler ve Son işlemler kartları izler. Aylık harcama seçili aracın bu ayki tüm yakıt tutarlarını toplar; MTV, bakım, lastik, muayene ve diğer giderler henüz kaydedilemediği için — gösterilir. Yaklaşan işler şimdilik açıkça boş durumdur; iş ekleme/tamamlama yoktur. Son işlemler en yeni üç yakıt kaydını gösterir. Harcama ve son işlemler kartının tamamı Raporlar içindeki ilgili bölüme gider. Raporlar ay seçimiyle yakıt harcamalarını, tüm zamanların yakıt özetini ve düzenlenebilir dolum geçmişini sunar. Araçlar etkindir. SON DAKİKA alanı bu üç karttan sonra gösterilir.
+
+
+Araçlar sekmesi kayıtlı araçları gerçek marka logosu, araç adı, yıl/yakıt, plaka ve kilometreyle listeler. Seçili araç hafif mavi çevre parıltısı, belirgin çerçeve, Seçili araç metni ve aria-pressed ile belirtilir; parıltı kullanıcının açık görsel tercihidir. Araçlar arasında geçiş burada yapılır; Ana Sayfa ve Raporlar araç seçicileri kaldırılmıştır. Yeni araç ekle mevcut sihirbazı, Detaylar mevcut özellikler panelini açar. Aracı sil araç adı ve dolum sayısıyla onay ister; yalnız ilgili araç/dolumlar silinir. Seçilmeyen araç silinince seçim korunur, seçili araç silinince kalan ilk araç seçilir. Saklama hatasında kayıtlar korunur. Ayarlarda araç ekleme bulunmaz.

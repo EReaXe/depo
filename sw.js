@@ -1,5 +1,6 @@
-const CACHE='depo-v30';
+const CACHE='depo-v33';
 const ASSETS=[
+  "./assets/js/ui/garage.js",
   "./assets/js/data/vehicle-specs.js",
   "./assets/js/core/market-notifications.js",
   "./assets/js/ui/notifications.js",

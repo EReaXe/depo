@@ -43,7 +43,7 @@ Bu dosya tüm depoya uygulanır. Kullanıcının en son açık talimatı bu kura
 ## Gezinme ve beta kapsamı
 
 - Alt menü sırası: **Ana Sayfa, Raporlar, +, Araçlar, Fiyatlar**.
-- **Raporlar ve Araçlar beta için görünür fakat disabled** kalır; kullanıcı açılmasını istemeden etkinleştirme. Erişilebilir adlarında geliştirme durumu belirtilir.
+- **Raporlar ve Araçlar etkindir.** Araç seçimi ve yönetimi Araçlar sekmesindedir.
 - Ortadaki `+` yakıt ekler. Araç yoksa Ana Sayfa'daki araç ekleme eylemine yönlendirir.
 - Üstte uygulama adı ortalanır. Soldaki menü Ayarlar panelini açar. Sağdaki bildirim simgesi aktiftir ve bildirim panelini açar; rozet yalnızca gerçek okunmamış bildirim sayısını gösterir.
 - Ana Sayfa'da **“Ana Sayfa” başlığı ve logo altı ayırıcı çizgi bulunmaz**.
@@ -51,7 +51,7 @@ Bu dosya tüm depoya uygulanır. Kullanıcının en son açık talimatı bu kura
 - Araç varsa Ana Sayfa kart düzenindedir. İlk kart marka logosu/adı, model, plaka veya plaka ekleme bağlantısı, kilometre, ortalama tüketim ve maliyet içerir.
 - Araç kartındaki ok doğrudan düzenlemeye gitmez: araç özellikleri panelini açar. Panelin sağ üstündeki kalem/**Düzenle** araç düzenlemesini açar. Plaka bağlantısı mevcut aracın 6. adımına gider.
 - Araç özelliklerinde motor, kasa tipi, depo hacmi ve şehir/yol tüketimi yalnız kaynaklı yerel katalogdaki kesin ortak eşleşmeyle gösterilir. Model adından tahmin edilmez. Ek motor/versiyon seçimi eklenmez; belirsiz alanlar `—` kalır. WLTP birleşik değer ayrı etiketlenir; dolum hesabına katılmaz.
-- Ayarlardan araç ekleme, tanıtımı yeniden açma ve yedek işlemlerine erişilir. Uygulamayı yükle seçeneği Ayarlarda her zaman görünür; doğrudan kurulum desteklenmiyorsa cihaza uygun rehber açılır.
+- Ayarlardan tanıtımı yeniden açma ve yedek işlemlerine erişilir; araç ekleme Araçlar sekmesindedir. Uygulamayı yükle seçeneği Ayarlarda her zaman görünür; doğrudan kurulum desteklenmiyorsa cihaza uygun rehber açılır.
 
 ## Hızlı dolum
 
@@ -114,7 +114,7 @@ Bu dosya tüm depoya uygulanır. Kullanıcının en son açık talimatı bu kura
 
 ## Sekmeyi hatırlama
 
-- Son açık sekme bu tarayıcıda depo-last-screen anahtarıyla hatırlanır. Yenilemede veya uygulama yeniden açıldığında Ana Sayfa ya da Fiyatlar sekmesine dönülür; kayıt yoksa, değer geçersizse veya depolama kullanılamıyorsa Ana Sayfa açılır. Beta için pasif sekmeler geri yüklenmez.
+- Son açık sekme bu tarayıcıda depo-last-screen anahtarıyla hatırlanır. Yenilemede veya uygulama yeniden açıldığında Ana Sayfa, Raporlar, Araçlar ya da Fiyatlar sekmesine dönülür; kayıt yoksa, değer geçersizse veya depolama kullanılamıyorsa Ana Sayfa açılır. Geçersiz sekmeler geri yüklenmez.
 - Tanıtımı tamamlama Ana Sayfa'ya döndürür. + ve paneller sekme olarak saklanmaz.
 
 ## Panel sürükleme
@@ -148,6 +148,15 @@ Ayarlar > Veriler ve uygulama > Tüm verileri temizle, araç ve dolum sayıları
 
 Fiyatın yanında aynı il/yaka, marka, yakıt ve kaynaktaki son farklı fiyata göre artışta yeşil yukarı, düşüşte kırmızı aşağı ok gösterilir (kullanıcının açık renk tercihi). Okun erişilebilir açıklaması önceki fiyatı içerir. İlk gözlemde, kaynak değişince ve eski/geçersiz fiyatta ok yoktur. Fiyat sabit kaldığında son değişim yönü korunur; yenileme kendi başına ok oluşturmaz. Geçmiş veri kaynağın geçmiş servisi değildir; bundan sonraki eşitlemelerle birikir.
 
-Ana Sayfa’da araç kartının hemen altında yalnız geçerli zam/indirim beklentisi haberi olduğunda SON DAKİKA şeridi görünür. Mevcut NTV/TRT haber akışı, kaynak doğrulaması ve süre sonu kuralları kullanılır; kaynak ve özgün yayın tarihi gösterilir. Haber yokken veya süre dolunca alan gizlenir. Birden fazla geçerli haber aynı alanda listelenir; otomatik kayan/yanıp sönen metin yoktur. Beklenti kesin fiyat olarak sunulmaz.
+Ana Sayfa’da Ana Sayfa özet kartlarının altında yalnız geçerli zam/indirim beklentisi haberi olduğunda SON DAKİKA şeridi görünür. Mevcut NTV/TRT haber akışı, kaynak doğrulaması ve süre sonu kuralları kullanılır; kaynak ve özgün yayın tarihi gösterilir. Haber yokken veya süre dolunca alan gizlenir. Birden fazla geçerli haber aynı alanda listelenir; otomatik kayan/yanıp sönen metin yoktur. Beklenti kesin fiyat olarak sunulmaz.
 
 Beklenti haberleri SON DAKİKA şeridinde, Fiyatlar beklenti alanında ve Bildirimlerde kaynaktan açıkça çıkarılabilen tutarı da gösterir. Zam/indirim miktarı TL/L olarak etiketlenir; kaynak beklenen litre fiyatını açıkça veriyorsa ayrı belirtilir. Mevcut il fiyatına zam eklenerek tahmini yeni fiyat üretilmez. RSS başlık/özetindeki geleceğe yönelik açık tutar cümleleri kullanılır; yakıt eşleşmesi belirsiz veya tutarlar çelişkiliyse gösterilmez. Tutar çıkarılamazsa “Tutar bilgisi alınamadı.” yazılır. Eski haber kayıtları geçerli kalır; aynı haber güncellenirse mevcut bildirim metni güncellenir, yeniden okunmamış bildirim oluşturulmaz.
+
+
+Ana Sayfa araç kartını Aylık harcama, Yaklaşan işler ve Son işlemler kartları izler. Aylık harcama seçili aracın bu ayki tüm yakıt tutarlarını toplar; MTV, bakım, lastik, muayene ve diğer giderler henüz kaydedilemediği için — gösterilir. Yaklaşan işler şimdilik açıkça boş durumdur; iş ekleme/tamamlama yoktur. Son işlemler en yeni üç yakıt kaydını gösterir. Harcama ve son işlemler kartının tamamı Raporlar içindeki ilgili bölüme gider. Raporlar ay seçimiyle yakıt harcamalarını, tüm zamanların yakıt özetini ve düzenlenebilir dolum geçmişini sunar. Araçlar etkindir. SON DAKİKA alanı bu üç karttan sonra gösterilir.
+
+
+Kullanıcının sabit ölçek tercihiyle viewport 1× olarak sınırlandırılır; dokunmatik pinch/çift dokunma yakınlaştırması, uygulama içindeki Ctrl/Cmd + tekerlek ve yakınlaştırma klavye kısayolları engellenir. Normal kaydırma korunur. Bu, yakınlaştırma erişilebilirliği açısından açık kullanıcı tercihidir; tarayıcının menüsünü, erişilebilirlik geçersiz kılmalarını veya işletim sistemi büyütecini web uygulaması denetleyemez.
+
+
+Araçlar sekmesi kayıtlı araçları gerçek marka logosu, araç adı, yıl/yakıt, plaka ve kilometreyle listeler. Seçili araç hafif mavi çevre parıltısı, belirgin çerçeve, Seçili araç metni ve aria-pressed ile belirtilir; parıltı kullanıcının açık görsel tercihidir. Araçlar arasında geçiş burada yapılır; Ana Sayfa ve Raporlar araç seçicileri kaldırılmıştır. Yeni araç ekle mevcut sihirbazı, Detaylar mevcut özellikler panelini açar. Aracı sil araç adı ve dolum sayısıyla onay ister; yalnız ilgili araç/dolumlar silinir. Seçilmeyen araç silinince seçim korunur, seçili araç silinince kalan ilk araç seçilir. Saklama hatasında kayıtlar korunur. Ayarlarda araç ekleme bulunmaz.

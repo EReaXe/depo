@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="tr" data-starting><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#f2f2f7"><script>
+<html lang="tr" data-starting><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><meta name="theme-color" content="#f2f2f7"><script>
 (()=>{let preference='system';try{const saved=localStorage.getItem('depo-theme');if(['system','light','dark'].includes(saved))preference=saved;}catch{}
 const theme=preference==='system'?(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'):preference;
 document.documentElement.dataset.theme=theme;document.documentElement.dataset.themePreference=preference;document.documentElement.style.colorScheme=theme;
@@ -9,19 +9,22 @@ document.querySelector('meta[name="theme-color"]').setAttribute('content',theme=
 <main><div class="intro" hidden><div><h1 id="screenTitle" tabindex="-1">Ana Sayfa</h1><p id="screenDescription">Aracının tüketimi, bir bakışta.</p></div><button class="primary" id="addRecord">+ Yakıt ekle</button></div>
 <section id="garage" hidden class="garage" aria-label="Araç seçimi"><label for="vehicle">Aracım</label><select id="vehicle"></select><button id="editVehicle">Düzenle</button><button id="addVehicle">+ Araç ekle</button></section>
 <section id="homeCards" class="homeCards" aria-label="Araç kartları" hidden></section>
+<section id="homeDashboard" class="homeDashboard" aria-label="Harcama ve işler" hidden></section>
 <div id="homeExpectations" hidden></div>
 <section id="homeEmpty" class="homeEmpty" hidden><svg viewBox="0 0 64 64" aria-hidden="true"><path d="m8 28 24-16 24 16v27H8zM17 55V30h30v25M17 37h30M17 44h30"/></svg><h2>Garaja araç ekleyin</h2><p>Yakıt takibine başlamak için<br>ilk aracınızı garaja ekleyin.</p><button id="homeAddVehicle" class="primary">+ Araç ekle</button></section>
+<section id="vehiclesScreen" aria-label="Garajınızdaki araçlar" hidden><button id="garageAddVehicle" class="primary garageAddVehicle">+ Yeni araç ekle</button><div id="garageVehicles"></div></section>
 <section id="prices" class="pricesScreen" aria-label="Yakıt fiyatları" hidden></section>
-<section id="overview" hidden class="metrics" aria-label="Yakıt özeti"><div><span>Ortalama tüketim</span><strong id="consumption">—</strong><small>L / 100 km</small></div><div><span>Kilometre maliyeti</span><strong id="cost">—</strong><small>TL / km</small></div><div><span>Toplam harcama</span><strong id="spent">0</strong><small>TL</small></div><div><span>Kaydedilen yakıt</span><strong id="litres">0</strong><small>litre</small></div></section>
+<section id="monthlyReport" class="dashboardCard monthlyReport" hidden aria-labelledby="monthlyReportTitle"><h2 id="monthlyReportTitle" tabindex="-1">Aylık harcama</h2><label class="reportMonth">Ay seçin<input id="reportMonth" type="month"></label><div id="monthlyReportContent"></div><p class="dashboardNote">Yakıt kayıtlarından hesaplanır. Diğer giderleri kaydetme henüz desteklenmiyor.</p></section>
+<section id="overview" hidden class="metrics" aria-label="Tüm zamanların yakıt özeti"><div><span>Ortalama tüketim</span><strong id="consumption">—</strong><small>L / 100 km</small></div><div><span>Kilometre maliyeti</span><strong id="cost">—</strong><small>TL / km</small></div><div><span>Tüm zamanlar · Harcama</span><strong id="spent">0</strong><small>TL</small></div><div><span>Kaydedilen yakıt</span><strong id="litres">0</strong><small>litre</small></div></section>
 <p class="hint" id="calculationHint" hidden></p>
-<section id="history" class="history" hidden><div class="sectionHeading"><h2>Dolum geçmişi</h2><span id="count">0 kayıt</span></div><div id="records"></div></section>
+<section id="history" class="history" hidden><div class="sectionHeading"><h2 id="historyTitle" tabindex="-1">Son işlemler</h2><span id="count">0 kayıt</span></div><div id="records"></div></section>
 <details id="help" class="help" hidden><summary>Tüketim nasıl hesaplanır?</summary><p>İlk tam dolum başlangıç noktasıdır. Bir sonraki tam dolumda, arada alınan tüm yakıt gidilen mesafeye bölünür. Kısmi dolumlar hesaba katılır; son tam dolumdan sonraki kayıtlar, depo yeniden dolana kadar ortalamaya girmez. TL/km, aynı aralıktaki yakıt harcamalarından hesaplanır. İlk dolumun yakıtı ve tutarı başlangıç olduğu için ortalamaya dahil edilmez.</p></details>
 <div hidden><footer id="settings"><span>Depo · Yolun hesabı sende.</span><div><button id="install"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M4 16v5h16v-5"/></svg><span data-install-label>Uygulamayı yükle</span></button><button id="showWelcome">Tanıtımı göster</button></div></footer><p id="storageNote" class="storageNote">Kayıtlar yalnızca bu tarayıcıda saklanır. Tarayıcı verilerini silmeden önce yedek al.</p></div></main>
 <nav class="bottomNav" aria-label="Ana gezinme">
 <button data-screen="home" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10H3zM9 20v-7h6v7"/></svg>Ana Sayfa</button>
-<button data-screen="reports" disabled aria-label="Raporlar, beta sürümünde henüz kullanılamıyor" title="Geliştirme aşamasında"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3v18h17M8 16v-5M13 16V7M18 16V4"/></svg>Raporlar</button>
+<button data-screen="reports"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3v18h17M8 16v-5M13 16V7M18 16V4"/></svg>Raporlar</button>
 <button id="navAdd" class="navAdd" aria-label="Yakıt kaydı ekle"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span></button>
-<button data-screen="vehicles" disabled aria-label="Araçlar, beta sürümünde henüz kullanılamıyor" title="Geliştirme aşamasında"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 10 2-6h12l2 6M3 10h18v8H3zM6 18v3M18 18v3M6 14h2M16 14h2"/></svg>Araçlar</button>
+<button data-screen="vehicles"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 10 2-6h12l2 6M3 10h18v8H3zM6 18v3M18 18v3M6 14h2M16 14h2"/></svg>Araçlar</button>
 <button data-screen="prices"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21V4h11v17M2 21h15M7 7h5v5H7zM15 10h3l3 4v5M18 4l3 3v7"/></svg>Fiyatlar</button>
 </nav><section id="welcome" class="welcome" aria-labelledby="welcomeTitle" hidden>
   <div class="welcomeBrand"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6 27V7a2 2 0 0 1 2-2h11v22M4 27h18M9 9h7v7H9zM19 12h3l4 5v7a2 2 0 0 0 4 0V13l-5-5"/></svg>depo</div>
